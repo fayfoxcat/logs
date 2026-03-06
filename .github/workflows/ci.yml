@@ -1,0 +1,118 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'  # 仅在推送 v* 标签时触发，例如 v0.0.1
+
+permissions:
+  contents: write  # 允许创建 Release 和上传文件
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Update pom.xml version
+      run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }} -DgenerateBackupPoms=false
+      
+    - name: Build release artifacts
+      run: mvn clean package -DskipTests
+      
+    - name: List build artifacts
+      run: |
+        echo "构建产物列表："
+        ls -lh target/*.jar
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+        files: |
+          target/logs-*.jar
+        body: |
+          ## Log Viewer ${{ steps.get_version.outputs.VERSION }}
+          
+          ### 📦 下载说明
+          
+          - `logs-${{ steps.get_version.outputs.VERSION }}.jar` - 库文件，用于集成到其他项目
+          - `logs-${{ steps.get_version.outputs.VERSION }}-exec.jar` - 可执行文件，可独立运行
+          
+          ### 🚀 使用方法
+          
+          #### 作为库使用
+          
+          在你的项目 `pom.xml` 中添加：
+          
+          ```xml
+          <dependency>
+              <groupId>org.fayfoxcat</groupId>
+              <artifactId>logs</artifactId>
+              <version>${{ steps.get_version.outputs.VERSION }}</version>
+          </dependency>
+          ```
+          
+          在 `application.yml` 中配置：
+          
+          ```yaml
+          logs:
+            viewer:
+              enable-auth: true
+              endpoint: /logs
+              paths:
+                - /var/log/myapp
+          ```
+          
+          #### 独立运行
+          
+          ```bash
+          # 下载 jar 文件
+          wget https://github.com/fayfoxcat/logs/releases/download/v${{ steps.get_version.outputs.VERSION }}/logs-${{ steps.get_version.outputs.VERSION }}-exec.jar
+          
+          # 运行
+          java -jar logs-${{ steps.get_version.outputs.VERSION }}-exec.jar
+          
+          # 访问
+          # http://localhost:1098/logs
+          ```
+          
+          ### 📚 文档
+          
+          - [快速开始](https://github.com/fayfoxcat/logs#快速开始)
+          - [完整文档](https://github.com/fayfoxcat/logs/blob/main/README.md)
+          - [更新日志](https://github.com/fayfoxcat/logs/blob/main/CHANGELOG.md)
+          
+          ### ✨ 主要特性
+          
+          - 📁 多目录日志浏览
+          - 🔍 文件搜索（支持正则表达式）
+          - 📦 压缩文件支持（.zip, .gz）
+          - ⬇️ 批量下载
+          - 🎨 日志级别高亮
+          - 🔒 权限控制
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

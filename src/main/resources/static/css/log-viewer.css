@@ -1,0 +1,349 @@
+/**
+ * 中间日志展示栏样式
+ */
+
+/* 内容区容器 */
+.content {
+    background: var(--ant-bg-color);
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+
+/* 内容头部 */
+.content-header {
+    flex-shrink: 0;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    padding: 12px 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.content-header h5 {
+    color: var(--ant-text-color);
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.ms-auto {
+    margin-left: auto;
+}
+
+/* 日志文件路径显示 */
+.log-file-path {
+    padding: 10px 16px;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.log-file-path .path-label {
+    font-weight: 600;
+    color: var(--ant-text-color-secondary);
+    flex-shrink: 0;
+}
+
+.log-file-path .path-value {
+    color: var(--ant-primary-color);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.log-file-path .path-value.placeholder {
+    color: var(--ant-text-color-tertiary);
+    font-style: italic;
+}
+
+/* 内容主体 */
+.content-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+}
+
+/* 空状态提示 */
+#log-content-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 48px;
+    text-align: center;
+}
+
+#log-content-empty h4 {
+    color: var(--ant-text-color-secondary);
+    font-weight: 400;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+#log-content-empty p {
+    color: var(--ant-text-color-tertiary);
+    line-height: 1.8;
+    max-width: 500px;
+}
+
+/* 日志内容显示 */
+#log-content-actual {
+    background: #2b2b2b;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    height: 100%;
+    overflow: auto;
+}
+
+/* 日志语法高亮 */
+#log-content-actual .log-date,
+#log-content-actual .log-time { 
+    color: #26a69a; 
+}
+
+#log-content-actual .log-error { 
+    color: #f44336; 
+    font-weight: bold; 
+}
+
+#log-content-actual .log-warning { 
+    color: #ff9800; 
+    font-weight: bold; 
+}
+
+#log-content-actual .log-info { 
+    color: #2196f3; 
+}
+
+#log-content-actual .log-debug { 
+    color: #9c27b0; 
+}
+
+#log-content-actual .log-exception { 
+    color: #ef5350; 
+    font-style: italic; 
+}
+
+#log-content-actual .log-string { 
+    color: #66bb6a; 
+}
+
+#log-content-actual .log-number { 
+    color: #42a5f5; 
+}
+
+#log-content-actual .log-url { 
+    color: #29b6f6; 
+    text-decoration: underline; 
+    cursor: pointer;
+}
+
+#log-content-actual .log-ip { 
+    color: #ab47bc; 
+}
+
+/* 日志行 */
+.log-lines {
+    padding: 12px 0;
+}
+
+.log-line {
+    display: flex;
+    gap: 16px;
+    padding: 2px 16px;
+    white-space: pre;
+}
+
+.log-line:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.log-ln {
+    width: 60px;
+    text-align: right;
+    color: #999999;
+    user-select: none;
+    flex: 0 0 auto;
+}
+
+.log-txt {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+}
+
+/* 搜索高亮 */
+mark.log-hit {
+    background: var(--ant-warning-color);
+    color: #000;
+    padding: 2px 4px;
+    border-radius: var(--ant-border-radius-base);
+    font-weight: 500;
+}
+
+mark.log-hit.log-hit-current {
+    background: var(--ant-error-color);
+    color: #fff;
+    font-weight: 600;
+    padding: 2px 4px;
+    box-shadow: 0 0 8px rgba(255, 77, 79, 0.6);
+}
+
+/* 内容搜索框组合 */
+.content-search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    height: 36px;
+    border: 1px solid var(--ant-border-color);
+    border-radius: var(--ant-border-radius-base);
+    background: var(--ant-bg-color);
+    transition: all 0.3s;
+    min-width: 546px;
+    max-width: 676px;
+}
+
+.content-search-wrapper:hover {
+    border-color: var(--ant-primary-5);
+}
+
+.content-search-wrapper:focus-within {
+    border-color: var(--ant-primary-5);
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.content-search-wrapper .ant-input {
+    flex: 1;
+    border: none;
+    box-shadow: none;
+    height: 34px;
+    padding: 6px 12px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.content-search-wrapper .ant-input:hover,
+.content-search-wrapper .ant-input:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.content-search-wrapper .search-regex-checkbox {
+    flex-shrink: 0;
+    padding: 0 12px;
+    border-left: 1px solid var(--ant-border-color-split);
+    border-right: 1px solid var(--ant-border-color-split);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.content-search-wrapper .search-regex-checkbox:hover {
+    background: var(--ant-bg-color-light);
+}
+
+.content-search-wrapper .search-regex-checkbox label {
+    cursor: pointer;
+    margin: 0;
+    user-select: none;
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+}
+
+.content-search-wrapper .search-btn-inline {
+    flex-shrink: 0;
+    border: none;
+    border-radius: 0 var(--ant-border-radius-base) var(--ant-border-radius-base) 0;
+    height: 34px;
+    min-width: 60px;
+    margin: 0;
+    box-shadow: none;
+}
+
+.content-search-wrapper .search-btn-inline:hover {
+    box-shadow: none;
+}
+
+.content-search-wrapper .ant-input.regex-mode {
+    color: var(--ant-primary-color);
+    font-weight: 500;
+}
+
+/* 分页组件 */
+.pagination-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+}
+
+#page-jump-input {
+    width: 65px;
+    height: 28px;
+    padding: 2px 10px !important;
+    text-align: center;
+    font-size: var(--ant-font-size-sm);
+    line-height: 1.5715;
+    vertical-align: middle;
+}
+
+.pagination-info .page-total,
+.pagination-info .pagination-total-info {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    line-height: 28px;
+}
+
+.pagination-total-info {
+    color: var(--ant-text-color-tertiary);
+}
+
+/* 日志内容滚动条 - 优化深色主题 */
+#log-content-actual::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+#log-content-actual::-webkit-scrollbar-track {
+    background: #353535;
+    border-radius: 6px;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 6px;
+    border: 2px solid #353535;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb:hover {
+    background: #666666;
+    border-color: #353535;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb:active {
+    background: #777777;
+}

@@ -1,0 +1,96 @@
+/**
+ * 右侧搜索结果栏样式
+ */
+
+/* 搜索结果面板容器 */
+.search-results {
+    background: var(--ant-bg-color);
+    border-left: 1px solid var(--ant-border-color-split);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#main-row.right-collapsed #search-results-panel {
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* 搜索结果头部 */
+.search-results-header {
+    flex-shrink: 0;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-results-header h5 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* 搜索结果主体 */
+.search-results-body {
+    overflow: auto;
+    flex: 1;
+    padding: 8px;
+}
+
+/* 搜索结果项 */
+.search-result-item {
+    padding: 12px;
+    border: 1px solid var(--ant-border-color-split);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 8px;
+    background: var(--ant-bg-color);
+}
+
+.search-result-item:hover {
+    border-color: var(--ant-primary-color);
+    box-shadow: var(--ant-shadow-1);
+    transform: translateY(-2px);
+}
+
+.search-result-item.active {
+    background: var(--ant-primary-1);
+    border-color: var(--ant-primary-color);
+    box-shadow: var(--ant-shadow-2);
+}
+
+.search-result-number {
+    color: var(--ant-primary-color);
+    font-weight: 500;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+.search-result-line {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 无结果提示 */
+.no-results {
+    text-align: center;
+    padding: 32px;
+    color: var(--ant-text-color-tertiary);
+}
+
+/* 搜索匹配高亮 */
+.search-match, mark {
+    background-color: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 3px;
+}

@@ -1,0 +1,224 @@
+/**
+ * 左侧日志目录栏样式
+ */
+
+/* 侧边栏容器 */
+.sidebar {
+    background: var(--ant-bg-color);
+    border-right: 1px solid var(--ant-border-color-split);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#main-row.left-collapsed #sidebar {
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* 侧边栏头部 */
+.sidebar-header {
+    flex-shrink: 0;
+    padding: 0;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+}
+
+/* Logo标题 */
+.logo-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 24px;
+    gap: 14px;
+    background: linear-gradient(135deg, #98a5db 0%, #a489c0 100%);
+    margin: 0 0 20px 0;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.logo-icon {
+    font-size: 40px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 头部控件 */
+.sidebar-header .select-wrapper,
+.sidebar-header .ant-input-group {
+    margin: 0 16px 12px 16px;
+    width: calc(100% - 32px);
+}
+
+.sidebar-header .select-wrapper:first-of-type {
+    margin-top: 0;
+}
+
+.sidebar-header h5 {
+    margin: 0 0 16px 0;
+    color: var(--ant-text-color);
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* 侧边栏内容区 */
+.sidebar-content {
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 文件列表表头 */
+.file-list-header {
+    display: grid;
+    grid-template-columns: 1fr 90px;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ant-text-color-secondary);
+    background: var(--ant-bg-color-light);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* 文件列表 */
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list li {
+    padding: 0;
+    cursor: pointer;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    transition: all 0.3s var(--ant-ease-in-out);
+    position: relative;
+    user-select: none;
+}
+
+.file-list li:last-child {
+    border-bottom: none;
+}
+
+.file-list li:hover {
+    background: var(--ant-primary-1);
+}
+
+.file-list li.active {
+    background: var(--ant-primary-1);
+    border-left: 3px solid var(--ant-primary-color);
+}
+
+.file-list li.selected {
+    background: #f6ffed;
+    border-left: 3px solid var(--ant-success-color);
+}
+
+.file-list li.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ant-success-color);
+    font-weight: bold;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+/* 文件行 */
+.file-row {
+    display: grid;
+    grid-template-columns: 1fr 90px;
+    gap: 8px;
+    padding: 8px 12px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.file-row .file-col-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.file-row .file-col-size {
+    cursor: pointer;
+}
+
+/* 展开按钮 */
+.file-expander {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ant-border-color);
+    border-radius: 6px;
+    background: var(--ant-bg-color);
+    color: var(--ant-text-color-secondary);
+    flex: 0 0 auto;
+    font-size: 12px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.file-expander:hover {
+    color: var(--ant-primary-color);
+    border-color: var(--ant-primary-color);
+    background: var(--ant-primary-1);
+    transform: scale(1.05);
+}
+
+.file-expander.hidden {
+    visibility: hidden;
+}
+
+/* 文件图标和标签 */
+.file-icon {
+    flex: 0 0 auto;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.file-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--ant-text-color);
+    pointer-events: none;
+}
+
+.file-col-size {
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+    text-align: right;
+    cursor: pointer;
+    user-select: none;
+}
+
+.file-node.active .file-col-size,
+.file-node.selected .file-col-size {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* 树形子节点 */
+.tree-children {
+    padding-left: 0;
+}

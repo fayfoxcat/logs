@@ -1,0 +1,59 @@
+# Dependabot 配置文件
+# 自动检查并更新依赖
+
+version: 2
+updates:
+  # Maven 依赖更新
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "monthly"  # 改为每月检查一次
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3  # 限制同时打开的 PR 数量
+    reviewers:
+      - "fayfoxcat"
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    # 忽略某些依赖的更新
+    ignore:
+      # 忽略 Spring Boot 的主版本更新（2.x -> 3.x/4.x）
+      - dependency-name: "org.springframework.boot:*"
+        update-types: ["version-update:semver-major"]
+      # 忽略 jQuery 的主版本更新
+      - dependency-name: "org.webjars:jquery"
+        update-types: ["version-update:semver-major"]
+    # 将依赖更新分组
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework.boot:*"
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+    
+  # GitHub Actions 更新
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"  # 改为每月检查一次
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 2  # 限制同时打开的 PR 数量
+    reviewers:
+      - "fayfoxcat"
+    labels:
+      - "github-actions"
+      - "automated"
+    commit-message:
+      prefix: "ci"
+    # 将 Actions 更新分组
+    groups:
+      github-actions:
+        patterns:
+          - "actions/*"
+          - "softprops/*"
