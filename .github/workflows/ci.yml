@@ -33,7 +33,10 @@ jobs:
         
     - name: Get version from tag
       id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      run: |
+        TAG=${GITHUB_REF#refs/tags/}
+        VERSION=${TAG#v}
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
       
     - name: Update pom.xml version
       run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }} -DgenerateBackupPoms=false
