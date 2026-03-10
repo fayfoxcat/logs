@@ -10,8 +10,36 @@
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/log-viewer.css}">
     <link rel="stylesheet" th:href="@{/css/search-panel.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
-<body th:attr="data-endpoint=${endpoint}">
+<body th:attr="data-endpoint=${endpoint},data-auth-enabled=${authEnabled},data-authenticated=${authenticated},data-token-get=${tokenGetExpression != null ? tokenGetExpression : 'null'},data-token-header=${tokenHeaderName != null ? tokenHeaderName : 'null'}">
+    <!-- 登录遮罩层 -->
+    <div id="login-overlay" class="login-overlay" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-icon">📋</div>
+                <h3 class="login-title">日志查看器</h3>
+                <p class="login-subtitle">请输入认证密钥以继续</p>
+            </div>
+            <div class="login-form">
+                <div class="login-form-item">
+                    <label class="login-form-label" for="auth-key-input">认证密钥</label>
+                    <div class="login-form-input">
+                        <input type="password" id="auth-key-input" class="ant-input" placeholder="请输入认证密钥" autocomplete="off">
+                    </div>
+                </div>
+                <div class="login-form-item">
+                    <button id="login-btn" class="ant-btn ant-btn-primary w-100 login-form-button">登录</button>
+                </div>
+                <div id="login-error" class="login-error" style="display: none;"></div>
+            </div>
+            <div class="login-footer">
+                <span class="login-footer-icon">🔐</span>
+                <span>安全认证保护</span>
+            </div>
+        </div>
+    </div>
+    
     <div class="container-fluid p-0">
         <div id="main-row" class="right-collapsed">
             <!-- 折叠按钮触发区域（仅保留左侧） -->

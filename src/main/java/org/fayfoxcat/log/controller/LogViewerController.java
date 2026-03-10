@@ -1,6 +1,7 @@
 package org.fayfoxcat.log.controller;
 
 import org.fayfoxcat.log.config.LogViewerProperties;
+import org.fayfoxcat.log.service.AuthService;
 import org.fayfoxcat.log.service.LogViewerService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -29,22 +31,84 @@ public class LogViewerController {
 
     private final LogViewerProperties properties;
     private final LogViewerService logViewerService;
+    private final AuthService authService;
 
-    public LogViewerController(LogViewerProperties properties, LogViewerService logViewerService) {
+    public LogViewerController(LogViewerProperties properties, LogViewerService logViewerService, AuthService authService) {
         this.properties = properties;
         this.logViewerService = logViewerService;
+        this.authService = authService;
     }
 
     /**
      * 首页
      * @param model 模型
+     * @param session HTTP会话
      * @return 日志查看器页面
      */
     @GetMapping
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+        boolean isAuthenticated = authService.isAuthenticated(session);
+        String tokenGetExpr = authService.getTokenGetExpression();
+        String tokenHeader = authService.getTokenHeaderName();
+
         model.addAttribute("paths", properties.getEffectivePaths());
         model.addAttribute("endpoint", properties.getEndpoint());
+        model.addAttribute("authEnabled", authService.isAuthEnabled());
+        model.addAttribute("authenticated", isAuthenticated);
+        model.addAttribute("tokenGetExpression", tokenGetExpr);
+        model.addAttribute("tokenHeaderName", tokenHeader);
+        
         return "index";
+    }
+    
+    /**
+     * 登录验证
+     * @param authKey 认证密钥
+     * @param session HTTP会话
+     * @return 验证结果
+     */
+    @PostMapping("/auth/login")
+    @ResponseBody
+    public Map<String, Object> login(@RequestParam String authKey, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        if (authService.validateKey(authKey)) {
+            authService.setAuthenticated(session, true);
+            result.put("success", true);
+            result.put("message", "认证成功");
+        } else {
+            result.put("success", false);
+            result.put("message", "密钥错误");
+        }
+        return result;
+    }
+    
+    /**
+     * 登出
+     * @param session HTTP会话
+     * @return 登出结果
+     */
+    @PostMapping("/auth/logout")
+    @ResponseBody
+    public Map<String, Object> logout(HttpSession session) {
+        authService.setAuthenticated(session, false);
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("message", "已登出");
+        return result;
+    }
+    
+    /**
+     * 检查认证状态
+     * @param session HTTP会话
+     * @return 认证状态
+     */
+    @GetMapping("/auth/check")
+    @ResponseBody
+    public Map<String, Object> checkAuth(HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("authenticated", authService.isAuthenticated(session));
+        result.put("authEnabled", authService.isAuthEnabled());
+        return result;
     }
 
     /**

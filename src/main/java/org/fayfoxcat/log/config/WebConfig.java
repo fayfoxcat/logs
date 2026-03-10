@@ -3,6 +3,7 @@ package org.fayfoxcat.log.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,6 +18,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Value("${logs.viewer.endpoint:/logs}")
     private String logViewerEndpoint;
+    
+    private final AuthInterceptor authInterceptor;
+    
+    public WebConfig(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
+    }
 
     /**
      * 配置静态资源处理器
@@ -40,5 +47,16 @@ public class WebConfig implements WebMvcConfigurer {
         
         registry.addResourceHandler(logViewerEndpoint + "/js/**")
                 .addResourceLocations("classpath:/static/js/");
+    }
+    
+    /**
+     * 添加拦截器
+     * 
+     * @param registry 拦截器注册表
+     */
+    @Override
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns(logViewerEndpoint + "/**");
     }
 }

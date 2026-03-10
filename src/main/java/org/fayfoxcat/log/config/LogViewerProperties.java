@@ -36,6 +36,27 @@ public class LogViewerProperties {
      * 默认为 true，设置为 false 时跳过权限验证
      */
     private boolean enableAuth = true;
+    
+    /**
+     * 认证密钥
+     * 如果配置了此密钥，登录时需要输入此密钥
+     * 如果未配置，系统会生成临时密钥并打印到日志
+     */
+    private String authKey;
+    
+    /**
+     * 作为依赖时的token获取表达式
+     * 例如：sessionStorage.getItem("token")
+     * 用于从前端存储中获取token值
+     */
+    private String tokenGetExpression;
+    
+    /**
+     * 作为依赖时的token请求头名称
+     * 例如：access-token
+     * 用于在请求头中设置token
+     */
+    private String tokenHeaderName;
 
     public List<String> getPaths() {
         return paths;
@@ -59,6 +80,30 @@ public class LogViewerProperties {
 
     public void setEnableAuth(boolean enableAuth) {
         this.enableAuth = enableAuth;
+    }
+    
+    public String getAuthKey() {
+        return authKey;
+    }
+
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
+    }
+
+    public String getTokenGetExpression() {
+        return tokenGetExpression;
+    }
+
+    public void setTokenGetExpression(String tokenGetExpression) {
+        this.tokenGetExpression = tokenGetExpression;
+    }
+
+    public String getTokenHeaderName() {
+        return tokenHeaderName;
+    }
+
+    public void setTokenHeaderName(String tokenHeaderName) {
+        this.tokenHeaderName = tokenHeaderName;
     }
     
     /**

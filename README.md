@@ -14,7 +14,7 @@
 - 📦 压缩文件支持（.zip, .gz）
 - ⬇️ 单文件和批量下载
 - 🎨 日志级别语法高亮
-- 🔒 可选的权限控制
+- 🔐 灵活的认证方式（密钥认证/Token认证）
 - 🚀 零配置集成，开箱即用
 
 ## 快速开始
@@ -31,12 +31,39 @@
 
 ### 2. 配置
 
+最简配置（禁用认证）：
+
 ```yaml
 logs:
   viewer:
-    enable-auth: false  # 是否启用权限验证
+    enable-auth: false  # 禁用认证
     endpoint: /logs     # 访问路径
     paths:              # 日志目录白名单
+      - /var/log/app
+```
+
+启用密钥认证：
+
+```yaml
+logs:
+  viewer:
+    enable-auth: true
+    auth-key: your-secret-key  # 固定密钥（可选，不配置则自动生成临时密钥）
+    endpoint: /logs
+    paths:
+      - /var/log/app
+```
+
+作为依赖时使用Token认证：
+
+```yaml
+logs:
+  viewer:
+    enable-auth: true
+    token-get-expression: sessionStorage.getItem("token")  # 从前端获取token
+    token-header-name: access-token  # 请求头名称
+    endpoint: /logs
+    paths:
       - /var/log/app
 ```
 
@@ -46,18 +73,69 @@ logs:
 
 ## 配置说明
 
+### 基础配置
+
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `logs.viewer.enable-auth` | boolean | true | 是否启用权限验证 |
+| `logs.viewer.enable-auth` | boolean | true | 是否启用认证 |
 | `logs.viewer.endpoint` | String | /logs | 访问路径 |
 | `logs.viewer.paths` | List<String> | [] | 日志目录白名单 |
 
-### 权限验证
+### 认证配置
 
-- `enable-auth: false` - 允许匿名访问（开发环境）
-- `enable-auth: true` - 需要登录访问（生产环境）
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `logs.viewer.auth-key` | String | null | 认证密钥（可选） |
+| `logs.viewer.token-get-expression` | String | null | Token获取表达式（作为依赖时使用） |
+| `logs.viewer.token-header-name` | String | null | Token请求头名称（作为依赖时使用） |
 
-Spring Security 5.7+ 自动适配，其他权限框架参考 [集成指南](INTEGRATION_FOR_DIFFERENT_AUTH.md)
+### 认证方式
+
+#### 1. 禁用认证（开发环境）
+
+```yaml
+logs:
+  viewer:
+    enable-auth: false
+```
+
+#### 2. 密钥认证
+
+**使用固定密钥：**
+
+```yaml
+logs:
+  viewer:
+    enable-auth: true
+    auth-key: my-secret-password
+```
+
+**使用临时密钥：**
+
+不配置 `auth-key`，系统会在启动时生成临时密钥并打印到日志：
+
+```
+Using generated security password: a1b2c3d4e5f6g7h8
+```
+
+#### 3. Token认证（作为依赖时）
+
+当作为依赖集成到其他应用时，可以复用主应用的认证体系：
+
+```yaml
+logs:
+  viewer:
+    enable-auth: true
+    token-get-expression: sessionStorage.getItem("token")
+    token-header-name: access-token
+```
+
+支持的token获取方式：
+- `sessionStorage.getItem("token")`
+- `localStorage.getItem("authToken")`
+- `document.cookie.match(/token=([^;]+)/)?.[1]`
+
+详细说明请参考：[认证配置指南](docs/AUTH_GUIDE.md)
 
 ## 开发
 

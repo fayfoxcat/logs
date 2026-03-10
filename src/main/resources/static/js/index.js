@@ -4,8 +4,96 @@
  */
 
 $(document).ready(function () {
+    // 认证相关配置
+    const authEnabled = $('body').attr('data-auth-enabled') === 'true';
+    const authenticated = $('body').attr('data-authenticated') === 'true';
+    const tokenGetExpression = $('body').attr('data-token-get');
+    const tokenHeaderName = $('body').attr('data-token-header');
+    
     // API 基础路径：页面本身就是在 /{endpoint} 下访问（考虑 context-path）
     const apiBase = window.location.pathname.replace(/\/$/, "");
+    
+    // 检查是否有token（作为依赖时）
+    let hasToken = false;
+    if (tokenHeaderName && tokenGetExpression && tokenGetExpression !== 'null') {
+        try {
+            // 执行token获取表达式
+            const token = eval(tokenGetExpression);
+            if (token && token.trim()) {
+                hasToken = true;
+                console.log('检测到token，将在请求中自动添加');
+            }
+        } catch (e) {
+            console.warn('获取token失败:', e);
+        }
+    }
+    
+    // 如果配置了token请求头，设置全局AJAX拦截器
+    if (tokenHeaderName && tokenGetExpression && tokenGetExpression !== 'null') {
+        $.ajaxSetup({
+            beforeSend: function(xhr) {
+                try {
+                    // 执行token获取表达式
+                    const token = eval(tokenGetExpression);
+                    if (token && token.trim()) {
+                        xhr.setRequestHeader(tokenHeaderName, token);
+                        console.log('已添加token到请求头:', tokenHeaderName);
+                    }
+                } catch (e) {
+                    console.warn('获取token失败:', e);
+                }
+            }
+        });
+    }
+    
+    // 检查是否需要显示登录界面
+    // 如果启用认证 且 未通过session认证 且 没有token，则显示登录页
+    if (authEnabled && !authenticated && !hasToken) {
+        $('#login-overlay').show();
+        
+        // 登录按钮点击事件
+        $('#login-btn').click(function() {
+            const authKey = $('#auth-key-input').val().trim();
+            if (!authKey) {
+                showLoginError('请输入认证密钥');
+                return;
+            }
+            
+            $.ajax({
+                url: apiBase + '/auth/login',
+                method: 'POST',
+                data: { authKey: authKey },
+                success: function(response) {
+                    if (response.success) {
+                        $('#login-overlay').hide();
+                        location.reload();
+                    } else {
+                        showLoginError(response.message || '登录失败');
+                    }
+                },
+                error: function() {
+                    showLoginError('登录请求失败，请重试');
+                }
+            });
+        });
+        
+        // 回车登录
+        $('#auth-key-input').keypress(function(e) {
+            if (e.which === 13) {
+                $('#login-btn').click();
+            }
+        });
+        
+        function showLoginError(message) {
+            $('#login-error').text(message).show();
+            setTimeout(function() {
+                $('#login-error').fadeOut();
+            }, 3000);
+        }
+        
+        // 如果启用了认证且没有token，阻止后续初始化
+        return;
+    }
 
     // 状态
     let currentRootPath = $("#path-select").val();
