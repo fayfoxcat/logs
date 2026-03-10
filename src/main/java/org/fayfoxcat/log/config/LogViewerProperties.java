@@ -42,7 +42,7 @@ public class LogViewerProperties {
      * 如果配置了此密钥，登录时需要输入此密钥
      * 如果未配置，系统会生成临时密钥并打印到日志
      */
-    private String authKey;
+    private String secretKey;
     
 
 
@@ -70,12 +70,12 @@ public class LogViewerProperties {
         this.enableAuth = enableAuth;
     }
     
-    public String getAuthKey() {
-        return authKey;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setAuthKey(String authKey) {
-        this.authKey = authKey;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
 

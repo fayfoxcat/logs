@@ -34,18 +34,14 @@ public class AuthService {
     @PostConstruct
     public void init() {
         if (properties.isEnableAuth()) {
-            if (properties.getAuthKey() != null && !properties.getAuthKey().trim().isEmpty()) {
-                effectiveAuthKey = properties.getAuthKey();
+            if (properties.getSecretKey() != null && !properties.getSecretKey().trim().isEmpty()) {
+                effectiveAuthKey = properties.getSecretKey();
                 keyVersion = "config:" + effectiveAuthKey.hashCode();
                 logger.info("日志查看器认证已启用，使用配置的密钥");
             } else {
                 effectiveAuthKey = generateTemporaryKey();
                 keyVersion = "temp:" + System.currentTimeMillis();
-                String separator = "================================================================================";
-                logger.warn(separator);
-                logger.warn("日志查看器认证已启用，但未配置密钥，已生成临时密钥：");
-                logger.warn("Using generated security password: {}", effectiveAuthKey);
-                logger.warn(separator);
+                logger.warn("日志查看器认证已启用，但未配置密钥，已生成临时密钥：{}", effectiveAuthKey);
             }
         } else {
             logger.info("日志查看器认证已禁用");

@@ -14,6 +14,6 @@ logs:
   viewer:
     endpoint: /logs
     enable-auth: true
-    # auth-key: your-secret-key
+    secret-key:
     paths:
       - ./
