@@ -8,6 +8,11 @@ spring:
     suffix: .html
     encoding: UTF-8
     mode: HTML
+  security:
+    user:
+      name: disabled
+      password: disabled
+      roles: []
 
 # 日志查看器配置
 logs:
