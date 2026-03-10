@@ -449,6 +449,53 @@ mark.log-hit.log-hit-current {
     z-index: 1;
 }
 
+/* 内容区域专用加载样式 - 透明遮罩 */
+.content-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent; /* 完全透明的遮罩 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none; /* 允许点击穿透 */
+}
+
+.content-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 24px;
+    background: var(--ant-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--ant-border-color);
+    position: relative;
+    pointer-events: auto; /* 恢复loading内容的点击事件 */
+    backdrop-filter: blur(2px);
+}
+
+.content-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--ant-border-color-split);
+    border-top: 2px solid var(--ant-primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.content-loading-text {
+    font-size: 14px;
+    color: var(--ant-text-color-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
 .loading-spinner::after {
     content: '';
     position: absolute;

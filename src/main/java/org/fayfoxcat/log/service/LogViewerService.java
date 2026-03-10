@@ -1,6 +1,8 @@
 package org.fayfoxcat.log.service;
 
 import org.fayfoxcat.log.config.LogViewerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -18,10 +20,15 @@ import java.util.zip.ZipFile;
 
 /**
  * 日志查看器服务
- * 提供文件和目录的操作功能
+ * 提供文件和目录的操作功能，包括文件读取、搜索、压缩包处理等
+ * 
+ * @author fayfoxcat
+ * @version 0.0.1
  */
 @Service
 public class LogViewerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LogViewerService.class);
 
     private final LogViewerProperties properties;
 

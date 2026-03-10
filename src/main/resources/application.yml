@@ -1,25 +1,43 @@
 server:
   port: 1098
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json
 
 spring:
   thymeleaf:
-    cache: false
-    prefix: classpath:/templates/
-    suffix: .html
-    encoding: UTF-8
-    mode: HTML
+    cache: false                    # 开发环境禁用缓存，生产环境建议设为 true
+    prefix: classpath:/templates/   # 模板文件路径前缀
+    suffix: .html                   # 模板文件后缀
+    encoding: UTF-8                 # 模板文件编码
+    mode: HTML                      # 模板模式
   security:
     user:
-      name: disabled
-      password: disabled
-      roles: []
-
-# 日志查看器配置
+      name: disabled                # 禁用默认用户
+      password: disabled            # 禁用默认密码
+      roles: []                     # 清空默认角色
+  servlet:
+    multipart:
+      max-file-size: 10MB          # 单个文件最大大小
+      max-request-size: 50MB       # 请求最大大小
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 3600            # 静态资源缓存时间（秒）
+          cache-public: true       # 允许公共缓存
 logs:
   viewer:
     endpoint: /logs
     enable-auth: false
-    secret-key:
+    secret-key: 
     paths:
-      - C:/Users/root/Desktop/logs
-      - C:/Users/root/Documents/项目/github/logs/test-logs/
+      - C:/Users/root/Desktop/logs                           # 示例：桌面日志目录
+logging:
+  level:
+    org.fayfoxcat.log: INFO        # 日志查看器组件日志级别
+    root: INFO                     # 根日志级别
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
