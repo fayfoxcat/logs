@@ -1,5 +1,5 @@
 /**
- * 文件树渲染模块
+ * 【目录区】文件树渲染模块
  */
 window.LogViewerFileTree = (function() {
     'use strict';
@@ -11,9 +11,6 @@ window.LogViewerFileTree = (function() {
     let currentSortBy = 'name';
     let currentSortOrder = 'asc';
 
-    /**
-     * 构建文件行HTML
-     */
     function buildFileRow(opts) {
         const depth = Number(opts.depth || 0);
         const expanderHtml = opts.expander
@@ -34,12 +31,8 @@ window.LogViewerFileTree = (function() {
         `;
     }
 
-    /**
-     * 排序文件列表
-     */
     function sortFileList(list, sortBy, sortOrder) {
         return list.slice().sort(function (a, b) {
-            // 目录优先
             if (a.directory && !b.directory) return -1;
             if (!a.directory && b.directory) return 1;
             
@@ -60,9 +53,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 渲染根目录树
-     */
     function renderRootTree(rootPath) {
         $("#file-list").empty().append(`<li class="text-center"><div class="loading-spinner"></div> 加载中...</li>`);
         $.get(apiBase + "/files", { path: rootPath }, function (data) {
@@ -73,9 +63,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 渲染目录子节点
-     */
     function renderDirectoryChildren($ul, children, depth, expandedPathsSet, expandedZipPathsSet) {
         const list = Array.isArray(children) ? children.slice() : [];
         const sortedList = sortFileList(list, currentSortBy, currentSortOrder);
@@ -123,11 +110,9 @@ window.LogViewerFileTree = (function() {
             if (isDir) $li.addClass("directory");
             if (isArchive) $li.addClass("zip-file");
 
-            // 子节点容器（懒加载）
             const $childUl = $("<ul class='file-list tree-children' style='display:none;'></ul>");
             $li.append($childUl);
 
-            // 如果之前是展开状态，立即加载并显示
             if (isExpanded && isDir && !isArchive) {
                 loadDirectoryChildren($li, f.path, $childUl, depth, expandedPathsSet, expandedZipPathsSet);
             }
@@ -139,9 +124,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 加载目录子节点
-     */
     function loadDirectoryChildren($li, dirPath, $childUl, depth, expandedPathsSet, expandedZipPathsSet) {
         $childUl.show();
         $li.find(".file-expander[data-expander='1']").first().text("▾");
@@ -154,9 +136,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 加载压缩包子节点
-     */
     function loadArchiveChildren($li, zipPath, $childUl, depth) {
         $childUl.show();
         $li.find(".file-expander[data-expander='1']").first().text("▾");
@@ -169,9 +148,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 展开目录节点
-     */
     function expandDirectoryNode($li, dirPath) {
         const $childUl = $li.children("ul.tree-children");
         if ($childUl.length === 0) return;
@@ -201,9 +177,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 展开压缩包节点
-     */
     function expandArchiveNode($li, zipPath) {
         const $childUl = $li.children("ul.tree-children");
         if ($childUl.length === 0) return;
@@ -235,9 +208,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 渲染压缩包子节点
-     */
     function renderZipChildren($ul, zipPath, prefix, children, depth) {
         const list = Array.isArray(children) ? children.slice() : [];
         const sortedList = sortFileList(list, currentSortBy, currentSortOrder);
@@ -250,7 +220,7 @@ window.LogViewerFileTree = (function() {
         sortedList.forEach(function (f) {
             const isDir = !!f.directory;
             const entryName = (f.entryName || "").replace(/\\/g, "/");
-            const id = f.path; // zipPath!entryName
+            const id = f.path;
 
             const $li = $("<li class='file-node'>");
             $li.addClass("zip-entry");
@@ -285,9 +255,6 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 展开压缩包目录节点
-     */
     function expandZipDirNode($li) {
         const zipPath = $li.attr("data-zip");
         const entryPrefix = $li.attr("data-entry");
@@ -317,42 +284,26 @@ window.LogViewerFileTree = (function() {
         });
     }
 
-    /**
-     * 设置排序方式
-     */
     function setSortBy(sortBy, sortOrder) {
         currentSortBy = sortBy;
         currentSortOrder = sortOrder;
-        
-        // 更新排序按钮状态
         $('.sort-btn').removeClass('active');
         $(`.sort-btn[data-sort="${sortBy}"][data-order="${sortOrder}"]`).addClass('active');
     }
 
-    /**
-     * 初始化模块
-     */
-    function init(apiBasePath, selectedIdsRef) {
+    function init(apiBasePath) {
         apiBase = apiBasePath;
-        // 注意：这里不能直接赋值引用，需要使用回调方式
     }
 
-    /**
-     * 设置选中ID集合的引用
-     */
     function setSelectedIdsRef(selectedIdsRef) {
         selectedIds = selectedIdsRef;
     }
 
-    /**
-     * 清空所有展开状态
-     */
     function clearExpandedState() {
         expandedPaths.clear();
         expandedZipPaths.clear();
     }
 
-    // 公开接口
     return {
         init,
         setSelectedIdsRef,

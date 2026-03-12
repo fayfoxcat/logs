@@ -21,11 +21,6 @@ window.LogViewerNotification = (function() {
     /**
      * 显示通知
      * @param {Object} options 通知选项
-     * @param {string} options.icon 图标
-     * @param {string} options.message 消息内容
-     * @param {string} options.type 通知类型
-     * @param {number} options.duration 显示时长
-     * @param {Array} options.actions 操作按钮数组
      * @returns {number} 通知ID
      */
     function show(options) {
@@ -35,7 +30,7 @@ window.LogViewerNotification = (function() {
         const {
             icon = 'ℹ️',
             message = '',
-            type = 'info', // info | success | warning | error
+            type = 'info',
             duration = 3000,
             actions = []
         } = options;
@@ -59,7 +54,6 @@ window.LogViewerNotification = (function() {
             </div>
         `);
 
-        // 绑定事件
         $notification.find('.notification-close').on('click', () => {
             close(id);
         });
@@ -72,15 +66,12 @@ window.LogViewerNotification = (function() {
             close(id);
         });
 
-        // 添加到容器
         notificationContainer.append($notification);
 
-        // 淡入动画
         setTimeout(() => {
             $notification.addClass('show');
         }, 10);
 
-        // 自动关闭
         if (duration > 0) {
             setTimeout(() => {
                 close(id);
@@ -92,7 +83,6 @@ window.LogViewerNotification = (function() {
 
     /**
      * 关闭通知
-     * @param {number} id 通知ID
      */
     function close(id) {
         const $notification = notificationContainer.find(`[data-id="${id}"]`);
@@ -102,11 +92,6 @@ window.LogViewerNotification = (function() {
         }, 300);
     }
 
-    /**
-     * 显示文件追加通知
-     * @param {number} newLines 新增行数
-     * @returns {number} 通知ID
-     */
     function showFileAppend(newLines) {
         return show({
             icon: '📝',
@@ -116,9 +101,6 @@ window.LogViewerNotification = (function() {
         });
     }
 
-    /**
-     * 显示文件修改通知
-     */
     function showFileModified() {
         return show({
             icon: '⚠️',
@@ -128,11 +110,6 @@ window.LogViewerNotification = (function() {
         });
     }
 
-    /**
-     * 显示跳转询问
-     * @param {Function} onConfirm 确认回调函数
-     * @returns {number} 通知ID
-     */
     function showJumpToLatest(onConfirm) {
         return show({
             icon: '🔄',
@@ -146,7 +123,6 @@ window.LogViewerNotification = (function() {
         });
     }
 
-    // 公开接口
     return {
         show,
         close,

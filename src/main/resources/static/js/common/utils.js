@@ -61,13 +61,11 @@ window.LogViewerUtils = (function() {
         const fileDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         
         if (fileDate.getTime() === today.getTime()) {
-            // 今天的文件只显示时间
             return d.toLocaleTimeString("zh-CN", {
                 hour: "2-digit",
                 minute: "2-digit"
             });
         } else {
-            // 其他日期显示月日
             return d.toLocaleDateString("zh-CN", {
                 month: "2-digit",
                 day: "2-digit"

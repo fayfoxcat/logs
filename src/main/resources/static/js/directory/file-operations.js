@@ -1,14 +1,11 @@
 /**
- * 文件操作模块
+ * 【目录区】文件操作模块
  */
 window.LogViewerFileOperations = (function() {
     'use strict';
 
     let apiBase = '';
 
-    /**
-     * 加载文件系统文件
-     */
     function loadFsFile(filePath, onSuccess, onError) {
         $.get(apiBase + "/file/content", { filePath: filePath }, function (data) {
             const lines = String(data || "").split("\n");
@@ -18,9 +15,6 @@ window.LogViewerFileOperations = (function() {
         });
     }
 
-    /**
-     * 加载压缩包内文件
-     */
     function loadZipEntry(zipPath, entryName, onSuccess, onError) {
         $.get(apiBase + "/zip/file/content", { zipPath: zipPath, entryName: entryName }, function (data) {
             const lines = String(data || "").split("\n");
@@ -31,9 +25,6 @@ window.LogViewerFileOperations = (function() {
         });
     }
 
-    /**
-     * 搜索文件
-     */
     function searchFiles(rootPath, keyword, onSuccess, onError) {
         $.get(apiBase + "/files/search", { rootPath: rootPath, keyword: keyword }, function (data) {
             if (onSuccess) onSuccess(data);
@@ -42,9 +33,6 @@ window.LogViewerFileOperations = (function() {
         });
     }
 
-    /**
-     * 下载选中的文件
-     */
     function downloadSelectedFiles(selectedIds, apiBasePath) {
         if (selectedIds.size === 0) return;
         const form = $(`<form action="${apiBasePath}/download" method="post"></form>`);
@@ -56,14 +44,10 @@ window.LogViewerFileOperations = (function() {
         form.remove();
     }
 
-    /**
-     * 初始化模块
-     */
     function init(apiBasePath) {
         apiBase = apiBasePath;
     }
 
-    // 公开接口
     return {
         init,
         loadFsFile,

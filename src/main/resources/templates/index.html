@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线日志查看器</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
-    <!-- 模块化样式 -->
+        <!-- 公共样式 -->
     <link rel="stylesheet" th:href="@{/css/common.css}">
     <link rel="stylesheet" th:href="@{/css/utilities.css}">
-    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/log-viewer.css}">
-    <link rel="stylesheet" th:href="@{/css/search-panel.css}">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link rel="stylesheet" th:href="@{/css/notification.css}">
+    <!-- 【目录区】 -->
+    <link rel="stylesheet" th:href="@{/css/directory.css}">
+    <!-- 【内容管理区】 -->
+    <link rel="stylesheet" th:href="@{/css/content-mgmt.css}">
+    <!-- 【日志区】 -->
+    <link rel="stylesheet" th:href="@{/css/log-area.css}">
+    <!-- 【搜索结果区】 -->
+    <link rel="stylesheet" th:href="@{/css/search-panel.css}">
 </head>
 <body th:attr="data-endpoint=${endpoint},data-auth-enabled=${authEnabled},data-authenticated=${authenticated}">
     <!-- 登录遮罩层 -->
@@ -180,21 +185,26 @@
         </div>
     </div>
 
-    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
-    <!-- 日志语法高亮器 -->
-    <parameter name="text">    <script th:src="@{/js/log-highlighter.js}"></script>
-    <!-- 模块化JS文件 -->
-    <script th:src="@{/js/utils.js}"></script>
-    <script th:src="@{/js/auth.js}"></script>
-    <script th:src="@{/js/notification.js}"></script>
-    <script th:src="@{/js/page-cache-manager.js}"></script>
-    <script th:src="@{/js/ui-state.js}"></script>
-    <script th:src="@{/js/selection-manager.js}"></script>
-    <script th:src="@{/js/pagination.js}"></script>
-    <script th:src="@{/js/content-renderer.js}"></script>
-    <script th:src="@{/js/search.js}"></script>
-    <script th:src="@{/js/file-operations.js}"></script>
-    <script th:src="@{/js/file-tree.js}"></script>
+        <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+    <!-- 公共模块 -->
+    <script th:src="@{/js/common/utils.js}"></script>
+    <script th:src="@{/js/common/auth.js}"></script>
+    <script th:src="@{/js/common/notification.js}"></script>
+    <script th:src="@{/js/common/ui-state.js}"></script>
+    <!-- 【日志区】 -->
+    <script th:src="@{/js/log-area/log-highlighter.js}"></script>
+    <script th:src="@{/js/log-area/content-renderer.js}"></script>
+    <!-- 【目录区】 -->
+    <script th:src="@{/js/directory/selection-manager.js}"></script>
+    <script th:src="@{/js/directory/file-operations.js}"></script>
+    <script th:src="@{/js/directory/file-tree.js}"></script>
+    <!-- 【内容管理区】 -->
+    <script th:src="@{/js/content-mgmt/pagination.js}"></script>
+    <script th:src="@{/js/content-mgmt/page-cache-manager.js}"></script>
+    <script th:src="@{/js/content-mgmt/toolbar.js}"></script>
+    <!-- 【搜索结果区】 -->
+    <script th:src="@{/js/search-results/search.js}"></script>
+    <!-- 主入口协调器 -->
     <script th:src="@{/js/app.js}"></script>
 </body>
 </html>

@@ -1,0 +1,203 @@
+/**
+ * 【日志区】日志内容显示样式
+ */
+
+/* 内容主体 */
+.content-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+}
+
+/* 空状态提示 */
+#log-content-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 48px;
+    text-align: center;
+}
+
+#log-content-empty h4 {
+    color: var(--ant-text-color-secondary);
+    font-weight: 400;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+#log-content-empty p {
+    color: var(--ant-text-color-tertiary);
+    line-height: 1.8;
+    max-width: 500px;
+}
+
+/* 日志内容显示 */
+#log-content-actual {
+    background: #2b2b2b;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+    min-height: 200px;
+}
+
+/* 日志语法高亮 */
+#log-content-actual .log-date,
+#log-content-actual .log-time { color: #26a69a; }
+#log-content-actual .log-error { color: #f44336; font-weight: bold; }
+#log-content-actual .log-warning { color: #ff9800; font-weight: bold; }
+#log-content-actual .log-info { color: #2196f3; }
+#log-content-actual .log-debug { color: #9c27b0; }
+#log-content-actual .log-exception { color: #ef5350; font-style: italic; }
+#log-content-actual .log-string { color: #66bb6a; }
+#log-content-actual .log-number { color: #42a5f5; }
+#log-content-actual .log-url { color: #29b6f6; text-decoration: underline; cursor: pointer; }
+#log-content-actual .log-ip { color: #ab47bc; }
+
+/* 日志行 */
+.log-lines {
+    padding: 12px 0;
+}
+
+.log-line {
+    display: flex;
+    gap: 16px;
+    padding: 2px 16px;
+    white-space: pre;
+    min-height: 25px;
+}
+
+.log-line:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* 虚拟滚动容器 */
+.virtual-scroll-container {
+    position: relative;
+    width: 100%;
+}
+
+.virtual-content {
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
+.virtual-scroll-container .log-line {
+    height: 25px;
+    box-sizing: border-box;
+}
+
+.log-ln {
+    width: 60px;
+    text-align: right;
+    color: #999999;
+    user-select: none;
+    flex: 0 0 auto;
+}
+
+.log-txt {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+}
+
+/* 搜索高亮 */
+mark.log-hit {
+    background: var(--ant-warning-color);
+    color: #000;
+    padding: 2px 4px;
+    border-radius: var(--ant-border-radius-base);
+    font-weight: 500;
+}
+
+mark.log-hit.log-hit-current {
+    background: var(--ant-error-color);
+    color: #fff;
+    font-weight: 600;
+    padding: 2px 4px;
+    box-shadow: 0 0 8px rgba(255, 77, 79, 0.6);
+}
+
+/* 页码提示框 */
+.page-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 1000;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.2s ease-in-out;
+}
+
+.page-indicator.show { opacity: 0.7; }
+.page-indicator.hide { opacity: 0; }
+
+/* 加载中遮罩层 */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(43, 43, 43, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.loading-text {
+    color: #e0e0e0;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* 日志内容滚动条 */
+#log-content-actual::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+#log-content-actual::-webkit-scrollbar-track {
+    background: #353535;
+    border-radius: 6px;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 6px;
+    border: 2px solid #353535;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb:hover {
+    background: #666666;
+    border-color: #353535;
+}
+
+#log-content-actual::-webkit-scrollbar-thumb:active {
+    background: #777777;
+}

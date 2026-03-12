@@ -1,0 +1,290 @@
+/**
+ * 【内容管理区】工具栏样式
+ * 搜索框、分页控件、刷新按钮等
+ */
+
+/* 内容区容器 */
+.content {
+    background: var(--ant-bg-color);
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+}
+
+/* 内容头部（工具栏） */
+.content-header {
+    flex-shrink: 0;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    padding: 12px 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.content-header h5 {
+    color: var(--ant-text-color);
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* 日志文件路径显示 */
+.log-file-path {
+    padding: 10px 16px;
+    background: var(--ant-bg-color);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.log-file-path .path-label {
+    font-weight: 600;
+    color: var(--ant-text-color-secondary);
+    flex-shrink: 0;
+}
+
+.log-file-path .path-value {
+    color: var(--ant-primary-color);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.log-file-path .path-value.placeholder {
+    color: var(--ant-text-color-tertiary);
+    font-style: italic;
+}
+
+/* 内容搜索框组合 */
+.content-search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    height: 36px;
+    border: 1px solid var(--ant-border-color);
+    border-radius: var(--ant-border-radius-base);
+    background: var(--ant-bg-color);
+    transition: all 0.3s;
+    min-width: 546px;
+    max-width: 676px;
+}
+
+.content-search-wrapper:hover {
+    border-color: var(--ant-primary-5);
+}
+
+.content-search-wrapper:focus-within {
+    border-color: var(--ant-primary-5);
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.content-search-wrapper .ant-input {
+    flex: 1;
+    border: none;
+    box-shadow: none;
+    height: 34px;
+    padding: 6px 12px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.content-search-wrapper .ant-input:hover,
+.content-search-wrapper .ant-input:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.content-search-wrapper .search-regex-checkbox {
+    flex-shrink: 0;
+    padding: 0 12px;
+    border-left: 1px solid var(--ant-border-color-split);
+    border-right: 1px solid var(--ant-border-color-split);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.content-search-wrapper .search-regex-checkbox:hover {
+    background: var(--ant-bg-color-light);
+}
+
+.content-search-wrapper .search-regex-checkbox label {
+    cursor: pointer;
+    margin: 0;
+    user-select: none;
+    font-size: 12px;
+    color: var(--ant-text-color-secondary);
+}
+
+.content-search-wrapper .search-btn-inline {
+    flex-shrink: 0;
+    border: none;
+    border-radius: 0 var(--ant-border-radius-base) var(--ant-border-radius-base) 0;
+    height: 34px;
+    min-width: 60px;
+    margin: 0;
+    box-shadow: none;
+}
+
+.content-search-wrapper .search-btn-inline:hover {
+    box-shadow: none;
+}
+
+.content-search-wrapper .ant-input.regex-mode {
+    color: var(--ant-primary-color);
+    font-weight: 500;
+}
+
+/* 分页组件 */
+.pagination-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+}
+
+#page-jump-input {
+    width: 65px;
+    height: 28px;
+    padding: 2px 10px !important;
+    text-align: center;
+    font-size: var(--ant-font-size-sm);
+    line-height: 1.5715;
+    vertical-align: middle;
+}
+
+.pagination-info .page-total,
+.pagination-info .pagination-total-info {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    line-height: 28px;
+}
+
+.pagination-total-info {
+    color: var(--ant-text-color-tertiary);
+}
+
+/* 现代化刷新按钮样式 */
+.refresh-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s var(--ant-ease-in-out);
+    border-color: var(--ant-primary-color);
+    color: var(--ant-primary-color);
+}
+
+.refresh-btn:hover {
+    background: var(--ant-primary-1);
+    border-color: var(--ant-primary-5);
+    color: var(--ant-primary-5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(24, 144, 255, 0.15);
+}
+
+.refresh-btn.refreshing {
+    background: var(--ant-primary-color);
+    border-color: var(--ant-primary-color);
+    color: var(--ant-text-color-inverse);
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.refresh-btn.refreshing:hover {
+    background: var(--ant-primary-5);
+    border-color: var(--ant-primary-5);
+    color: var(--ant-text-color-inverse);
+    transform: none;
+}
+
+.refresh-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s var(--ant-ease-in-out);
+}
+
+.refresh-btn-text {
+    margin-left: 4px;
+    transition: opacity 0.2s var(--ant-ease-in-out);
+}
+
+.refresh-btn-loading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+}
+
+.refresh-icon {
+    fill: currentColor;
+    transition: transform 0.3s var(--ant-ease-in-out);
+}
+
+.refresh-btn:hover .refresh-icon {
+    transform: rotate(180deg);
+}
+
+.refresh-btn.refreshing .refresh-icon {
+    animation: refresh-spin 1s linear infinite;
+}
+
+.loading-icon {
+    fill: currentColor;
+    animation: refresh-spin 1s linear infinite;
+}
+
+@keyframes refresh-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.refresh-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.refresh-btn.refreshing::after {
+    animation: refresh-shimmer 2s infinite;
+}
+
+@keyframes refresh-shimmer {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+@media (max-width: 768px) {
+    .refresh-btn .refresh-btn-text { display: none; }
+    .refresh-btn { width: 36px; padding: 0; }
+    .refresh-btn-loading { margin-left: 0; }
+}
+
+@media (prefers-color-scheme: dark) {
+    .refresh-btn:hover { background: rgba(24, 144, 255, 0.1); }
+    .refresh-btn::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); }
+}

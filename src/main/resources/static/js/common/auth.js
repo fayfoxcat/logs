@@ -25,11 +25,9 @@ window.LogViewerAuth = (function() {
         const authEnabled = $('body').attr('data-auth-enabled') === 'true';
         const authenticated = $('body').attr('data-authenticated') === 'true';
         
-        // 检查是否需要显示登录界面
         if (authEnabled && !authenticated) {
             $('#login-overlay').show();
             
-            // 登录按钮点击事件
             $('#login-btn').click(function() {
                 const authKey = $('#auth-key-input').val().trim();
                 if (!authKey) {
@@ -55,20 +53,18 @@ window.LogViewerAuth = (function() {
                 });
             });
             
-            // 回车登录
             $('#auth-key-input').keypress(function(e) {
                 if (e.which === 13) {
                     $('#login-btn').click();
                 }
             });
             
-            return false; // 阻止后续初始化
+            return false;
         }
         
-        return true; // 允许继续初始化
+        return true;
     }
 
-    // 公开接口
     return {
         init
     };
