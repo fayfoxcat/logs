@@ -3,6 +3,10 @@ package org.fayfoxcat.log.service;
 
 import org.fayfoxcat.log.config.LogPatternsProperties;
 import org.fayfoxcat.log.config.LogViewerProperties;
+import org.fayfoxcat.log.entity.FileMetadata;
+import org.fayfoxcat.log.entity.PageContent;
+import org.fayfoxcat.log.entity.SearchRequest;
+import org.fayfoxcat.log.entity.SearchResult;
 import org.springframework.stereotype.Service;
 
 import java.io.*;

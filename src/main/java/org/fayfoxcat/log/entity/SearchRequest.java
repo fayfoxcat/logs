@@ -1,4 +1,4 @@
-package org.fayfoxcat.log.service;
+package org.fayfoxcat.log.entity;
 
 /**
  * 搜索请求实体类

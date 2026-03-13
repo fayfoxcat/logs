@@ -1,4 +1,4 @@
-package org.fayfoxcat.log.service;
+package org.fayfoxcat.log.entity;
 
 import java.util.List;
 
