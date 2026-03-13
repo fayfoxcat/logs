@@ -10,24 +10,78 @@ import java.util.List;
  * @version 0.0.1
  */
 public class SearchResult {
+    /**
+     * 搜索操作是否成功
+     */
     private boolean success;
+
+    /**
+     * 搜索关键词
+     */
     private String keyword;
+
+    /**
+     * 总匹配数量
+     */
     private int totalMatches;
+
+    /**
+     * 实际返回的匹配数量（可能因限制而小于总匹配数）
+     */
     private int returnedMatches;
+
+    /**
+     * 结果是否被截断（超过最大返回数量限制）
+     */
     private boolean truncated;
+
+    /**
+     * 搜索耗时（毫秒）
+     */
     private long searchTime;
+
+    /**
+     * 匹配结果列表
+     */
     private List<MatchInfo> matches;
+
+    /**
+     * 文件版本标识（用于缓存控制）
+     */
     private String fileVersion;
+
+    /**
+     * 错误信息（当 success=false 时）
+     */
     private String error;
 
     /**
      * 匹配信息内部类
      */
     public static class MatchInfo {
+        /**
+         * 匹配行的行号（从1开始）
+         */
         private int lineNumber;
+
+        /**
+         * 匹配行的完整内容
+         */
         private String content;
+
+        /**
+         * 该行内所有匹配位置的范围列表
+         */
         private List<MatchRange> matchRanges;
+
+        /**
+         * 该行所在的页码（用于分页显示）
+         */
         private int page;
+
+        /**
+         * 上下文信息（匹配行前后的内容）
+         */
         private ContextInfo context;
 
         public int getLineNumber() {
@@ -75,7 +129,14 @@ public class SearchResult {
      * 匹配范围内部类
      */
     public static class MatchRange {
+        /**
+         * 匹配开始位置（字符索引，从0开始）
+         */
         private int start;
+
+        /**
+         * 匹配结束位置（字符索引，不包含）
+         */
         private int end;
 
         public MatchRange() {
@@ -107,7 +168,14 @@ public class SearchResult {
      * 上下文信息内部类
      */
     public static class ContextInfo {
+        /**
+         * 匹配行之前的行内容列表
+         */
         private List<String> before;
+
+        /**
+         * 匹配行之后的行内容列表
+         */
         private List<String> after;
 
         public List<String> getBefore() {

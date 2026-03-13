@@ -8,17 +8,64 @@ package org.fayfoxcat.log.service;
  * @version 0.0.1
  */
 public class FileMetadata {
+    /**
+     * 文件完整路径（支持压缩包格式：zipPath!entryName）
+     */
     private String filePath;
+
+    /**
+     * 文件名称（不包含路径）
+     */
     private String fileName;
+
+    /**
+     * 文件总行数
+     */
     private int totalLines;
+
+    /**
+     * 文件大小（字节）
+     */
     private long fileSize;
+
+    /**
+     * 最后修改时间（时间戳）
+     */
     private long lastModified;
+
+    /**
+     * 文件编码格式
+     */
     private String encoding;
+
+    /**
+     * 每页显示的行数
+     */
     private int linesPerPage;
+
+    /**
+     * 总页数
+     */
     private int totalPages;
+
+    /**
+     * 文件版本标识（用于缓存控制）
+     */
     private String fileVersion;
+
+    /**
+     * 是否为压缩包内的文件
+     */
     private boolean isZipEntry;
+
+    /**
+     * 压缩包路径（仅当 isZipEntry=true 时有效）
+     */
     private String zipPath;
+
+    /**
+     * 压缩包内条目名称（仅当 isZipEntry=true 时有效）
+     */
     private String entryName;
 
     public String getFilePath() {

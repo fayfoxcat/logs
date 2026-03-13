@@ -10,17 +10,64 @@ import java.util.List;
  * @version 0.0.1
  */
 public class PageContent {
+    /**
+     * 操作是否成功
+     */
     private boolean success;
+
+    /**
+     * 当前页码（从1开始）
+     */
     private int page;
+
+    /**
+     * 每页行数
+     */
     private int pageSize;
+
+    /**
+     * 总页数
+     */
     private int totalPages;
+
+    /**
+     * 文件总行数
+     */
     private int totalLines;
+
+    /**
+     * 当前页起始行号（从1开始）
+     */
     private int startLine;
+
+    /**
+     * 当前页结束行号（包含）
+     */
     private int endLine;
+
+    /**
+     * 当前页的行内容列表
+     */
     private List<String> lines;
+
+    /**
+     * 是否有下一页
+     */
     private boolean hasNext;
+
+    /**
+     * 是否有上一页
+     */
     private boolean hasPrev;
+
+    /**
+     * 文件版本标识（用于缓存控制）
+     */
     private String fileVersion;
+
+    /**
+     * 是否为压缩包内的文件
+     */
     private boolean isZipEntry;
 
     public boolean isSuccess() {
