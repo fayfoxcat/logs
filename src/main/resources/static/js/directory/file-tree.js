@@ -22,7 +22,7 @@ window.LogViewerFileTree = (function() {
             <div class="file-col file-col-name" ${indentStyle}>
               ${expanderHtml}
               <span class="file-icon">${opts.icon || ""}</span>
-              <span class="file-label" title="${window.LogViewerUtils.escapeHtml(opts.mtime || "-")}">${window.LogViewerUtils.escapeHtml(opts.name)}</span>
+              <span class="file-label" title="${window.LogViewerUtils.escapeHtml(opts.name || "")}">${window.LogViewerUtils.escapeHtml(opts.name)}</span>
             </div>
             <div class="file-col file-col-time" title="${window.LogViewerUtils.escapeHtml(opts.mtime || "-")}">${window.LogViewerUtils.escapeHtml(opts.mtimeShort || "-")}</div>
             <div class="file-col file-col-size" title="${window.LogViewerUtils.escapeHtml(opts.size || "-")}">${window.LogViewerUtils.escapeHtml(opts.size || "-")}</div>
@@ -99,7 +99,7 @@ window.LogViewerFileTree = (function() {
                 size: isDir ? "-" : window.LogViewerUtils.formatFileSize(f.size),
                 mtime: window.LogViewerUtils.formatDate(f.lastModified),
                 mtimeShort: window.LogViewerUtils.formatDateShort(f.lastModified),
-                tooltip: isDir ? "目录" : ("修改时间: " + window.LogViewerUtils.formatDate(f.lastModified)),
+                tooltip: f.name,
                 depth,
                 expander: isDir || isArchive,
                 expanded: isExpanded,
@@ -241,7 +241,7 @@ window.LogViewerFileTree = (function() {
                 size: isDir ? "-" : window.LogViewerUtils.formatFileSize(f.size),
                 mtime: window.LogViewerUtils.formatDate(f.lastModified),
                 mtimeShort: window.LogViewerUtils.formatDateShort(f.lastModified),
-                tooltip: isDir ? "目录" : ("修改时间: " + window.LogViewerUtils.formatDate(f.lastModified)),
+                tooltip: f.name,
                 depth,
                 expander: isDir,
                 expanded: false,

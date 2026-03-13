@@ -81,7 +81,7 @@ html, body {
 }
 
 #main-row {
-    --left-width: 392px;
+    --left-width: 432px;
     --right-width: 400px;
     
     height: 100%;
@@ -235,6 +235,7 @@ html, body {
 
 .ant-input::placeholder {
     color: var(--ant-text-color-tertiary);
+    user-select: none;
 }
 
 .ant-input-sm {
@@ -264,6 +265,7 @@ html, body {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+    user-select: none;
 }
 
 .ant-select:hover {

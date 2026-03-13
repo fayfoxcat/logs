@@ -36,11 +36,13 @@
     margin: 0 0 20px 0;
     border-radius: 0;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    user-select: none;
 }
 
 .logo-icon {
     font-size: 40px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    user-select: none;
 }
 
 .logo-text {
@@ -49,6 +51,7 @@
     color: #ffffff;
     letter-spacing: 2px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    user-select: none;
 }
 
 /* 头部控件 */
@@ -56,6 +59,7 @@
 .sidebar-header .ant-input-group {
     margin: 0 16px 12px 16px;
     width: calc(100% - 32px);
+    user-select: none;
 }
 
 .sidebar-header .select-wrapper:first-of-type {
@@ -67,6 +71,7 @@
     color: var(--ant-text-color);
     font-weight: 500;
     font-size: 16px;
+    user-select: none;
 }
 
 /* 侧边栏内容区 */
@@ -89,6 +94,7 @@
     position: sticky;
     top: 0;
     z-index: 5;
+    user-select: none;
 }
 
 .file-list-header .file-col {
@@ -96,6 +102,7 @@
     align-items: center;
     position: relative;
     white-space: nowrap;
+    user-select: none;
 }
 
 .file-list-header .file-col-name {
@@ -105,13 +112,14 @@
 }
 
 .file-list-header .file-col-time {
-    flex: 0 0 60px;
-    margin-right: 12px;
+    flex: 0 0 90px;
+    margin-right: 20px;
     justify-content: center;
 }
 
 .file-list-header .file-col-size {
     flex: 0 0 70px;
+    margin-right: 8px;
     justify-content: flex-end;
 }
 
@@ -213,16 +221,17 @@
 }
 
 .file-row .file-col-time {
-    flex: 0 0 60px;
+    flex: 0 0 90px;
     white-space: nowrap;
     text-align: center;
-    margin-right: 12px;
+    margin-right: 20px;
 }
 
 .file-row .file-col-size {
     flex: 0 0 70px;
     white-space: nowrap;
     text-align: right;
+    margin-right: 8px;
 }
 
 .file-row .file-col-name {
@@ -269,6 +278,7 @@
     flex: 0 0 auto;
     font-size: 16px;
     pointer-events: none;
+    user-select: none;
 }
 
 .file-col-size {
@@ -296,6 +306,7 @@
     font-size: 14px;
     color: var(--ant-text-color);
     pointer-events: none;
+    user-select: none;
 }
 
 .file-node.active .file-col-size,

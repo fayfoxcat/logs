@@ -56,7 +56,7 @@ window.LogViewerUtils = (function() {
 
     /**
      * 格式化短日期时间（用于文件列表）
-     * 今天显示时间，其他日期显示月日
+     * 显示年月日和时分
      * 
      * @param {number} ts - 时间戳（毫秒）
      * @returns {string} 格式化后的短日期时间字符串
@@ -65,21 +65,14 @@ window.LogViewerUtils = (function() {
         const t = Number(ts || 0);
         if (!isFinite(t) || t <= 0) return "-";
         const d = new Date(t);
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const fileDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
         
-        if (fileDate.getTime() === today.getTime()) {
-            return d.toLocaleTimeString("zh-CN", {
-                hour: "2-digit",
-                minute: "2-digit"
-            });
-        } else {
-            return d.toLocaleDateString("zh-CN", {
-                month: "2-digit",
-                day: "2-digit"
-            });
-        }
+        return d.toLocaleString("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
     }
 
     /**

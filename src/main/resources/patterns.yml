@@ -73,7 +73,7 @@ logs:
         highlight: true
       number:
         name: 独立纯数字
-        regex: "(?<=^|[\\s,，]|[\\u4e00-\\u9fa5])\\d+(?:\\.\\d+)?(?=[\\s,，]|[\\u4e00-\\u9fa5]|$)"
+        regex: "(?<=^|[\\s,，,：]|[\\u4e00-\\u9fa5])\\d+(?:\\.\\d+)?(?=[\\s,，]|[\\u4e00-\\u9fa5]|$)"
         class-name: log-number
         color: "#42a5f5"
         description: 匹配独立的整数或小数（前后只能是空格、逗号或中文）

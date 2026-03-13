@@ -26,12 +26,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    user-select: none;
 }
 
 .search-results-header h5 {
     font-size: 14px;
     font-weight: 500;
     margin: 0;
+    user-select: none;
 }
 
 /* 搜索结果主体 */
@@ -69,6 +71,7 @@
     font-weight: 500;
     font-size: 12px;
     margin-right: 8px;
+    user-select: none;
 }
 
 .search-result-line {
@@ -86,6 +89,7 @@
     text-align: center;
     padding: 32px;
     color: var(--ant-text-color-tertiary);
+    user-select: none;
 }
 
 /* 搜索匹配高亮 */

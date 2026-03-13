@@ -25,6 +25,7 @@
     transform: translateX(100%);
     transition: all 0.3s ease-in-out;
     border-left: 4px solid var(--ant-primary-color);
+    user-select: none;
 }
 
 .notification.show {
@@ -58,12 +59,14 @@
 .notification-icon {
     font-size: 20px;
     flex-shrink: 0;
+    user-select: none;
 }
 
 .notification-message {
     color: var(--ant-text-color);
     font-size: 14px;
     line-height: 1.5;
+    user-select: none;
 }
 
 .notification-actions {

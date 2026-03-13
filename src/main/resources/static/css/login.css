@@ -49,12 +49,14 @@
     padding: 32px 32px 28px;
     text-align: center;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    user-select: none;
 }
 
 .login-icon {
     font-size: 48px;
     margin-bottom: 12px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    user-select: none;
 }
 
 .login-title {
@@ -64,6 +66,7 @@
     font-weight: 700;
     letter-spacing: 1px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    user-select: none;
 }
 
 .login-subtitle {
@@ -71,6 +74,7 @@
     color: rgba(255, 255, 255, 0.9);
     font-size: var(--ant-font-size-base);
     font-weight: 400;
+    user-select: none;
 }
 
 .login-form {
@@ -93,6 +97,7 @@
     color: var(--ant-text-color);
     font-size: var(--ant-font-size-base);
     font-weight: 500;
+    user-select: none;
 }
 
 .login-form-input {
@@ -122,6 +127,7 @@
     align-items: center;
     gap: 8px;
     animation: shake 0.4s;
+    user-select: none;
 }
 
 @keyframes shake {
@@ -148,8 +154,10 @@
     text-align: center;
     color: var(--ant-text-color-secondary);
     font-size: var(--ant-font-size-sm);
+    user-select: none;
 }
 
 .login-footer-icon {
     margin-right: 4px;
+    user-select: none;
 }
