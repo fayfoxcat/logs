@@ -17,6 +17,8 @@ $(document).ready(function () {
     let usePaginationMode = false;
     let currentFileMetadata = null;
     let searchTimer = null;
+    let loadPageRequestId = 0;
+    let loadPageDebounceTimer = null;
 
     // ========== 初始化各区域模块 ==========
     window.LogViewerFileTree.init(apiBase);
@@ -84,16 +86,55 @@ $(document).ready(function () {
     /**
      * 加载指定页面的内容
      * 支持搜索高亮和自动滚动功能
+     * 使用防抖机制避免快速点击时发送过多请求
      * 
      * @param {number} page - 页码（从1开始）
      * @param {boolean} [autoScroll=false] - 是否自动滚动到底部
      */
     async function loadPage(page, autoScroll = false) {
+        // 立即更新页码显示，给用户即时反馈
+        window.LogViewerPagination.setCurrentPage(page);
+        window.LogViewerPagination.updatePagination(window.LogViewerPagination.getTotalPages() * 1000);
+        window.LogViewerContentRenderer.showPageIndicator(page);
+        
+        // 清除之前的防抖定时器
+        if (loadPageDebounceTimer) {
+            clearTimeout(loadPageDebounceTimer);
+        }
+        
+        // 设置新的防抖定时器，150ms 后执行实际加载
+        loadPageDebounceTimer = setTimeout(async () => {
+            await loadPageImmediate(page, autoScroll);
+        }, 150);
+    }
+    
+    /**
+     * 立即加载页面内容（内部方法）
+     * 实际执行页面加载逻辑
+     * 
+     * @param {number} page - 页码（从1开始）
+     * @param {boolean} [autoScroll=false] - 是否自动滚动到底部
+     */
+    async function loadPageImmediate(page, autoScroll = false) {
+        // 生成新的请求ID
+        const requestId = ++loadPageRequestId;
+        
         try {
             window.LogViewerContentRenderer.showLoading();
+            
             const data = await window.LogViewerPageCache.getPage(page);
             
-            window.LogViewerPagination.setCurrentPage(page);
+            // 请求被取消，不做任何处理
+            if (data === null) {
+                window.LogViewerContentRenderer.hideLoading();
+                return;
+            }
+            
+            // 检查是否是最新的请求，如果不是则丢弃结果
+            if (requestId !== loadPageRequestId) {
+                return;
+            }
+            
             window.LogViewerPageCache.setCurrentPage(page);
             
             const matches = window.LogViewerSearch.getCurrentMatches();
@@ -117,8 +158,11 @@ $(document).ready(function () {
                 window.LogViewerContentRenderer.scrollToBottom(true);
             }
         } catch (error) {
-            console.error('[App] Load page error:', error);
-            onFileLoadError('加载失败: ' + error.message);
+            // 只有最新的请求才显示错误
+            if (requestId === loadPageRequestId) {
+                console.error('[App] Load page error:', error);
+                onFileLoadError('加载失败: ' + error.message);
+            }
         }
     }
 
@@ -654,6 +698,7 @@ $(document).ready(function () {
     $(window).on("beforeunload", function () {
         window.LogViewerToolbar.cleanup();
         if (searchTimer) clearTimeout(searchTimer);
+        if (loadPageDebounceTimer) clearTimeout(loadPageDebounceTimer);
         if (usePaginationMode) window.LogViewerPageCache.clear();
     });
 

@@ -60,6 +60,10 @@ window.LogViewerPageCache = (function() {
             }
         }
         const data = await loadPageFromServer(page);
+        if (data === null) {
+            // 请求被取消，返回 null
+            return null;
+        }
         putCache(page, data);
         return data;
     }
@@ -101,9 +105,12 @@ window.LogViewerPageCache = (function() {
             return result;
             
         } catch (error) {
-            if (error.name !== 'AbortError') {
-                console.error(`[Cache] Load error: page ${page}`, error);
+            abortControllers.delete(page);
+            if (error.name === 'AbortError') {
+                // 请求被取消，静默处理
+                return null;
             }
+            console.error(`[Cache] Load error: page ${page}`, error);
             throw error;
         }
     }

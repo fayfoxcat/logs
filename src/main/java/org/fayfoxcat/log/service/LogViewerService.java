@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 日志查看器服务
@@ -34,6 +35,82 @@ public class LogViewerService {
 
     // 正则配置缓存
     private Map<String, Object> logPatternsCache = null;
+    
+    // 压缩文件内容缓存
+    private final Map<String, ZipEntryCache> zipEntryCache = new ConcurrentHashMap<>();
+    
+    /**
+     * 压缩文件条目缓存
+     */
+    private static class ZipEntryCache {
+        private final String[] lines;
+        private final long lastModified;
+        private final long fileSize;
+        private final long cacheTime;
+        
+        public ZipEntryCache(String[] lines, long lastModified, long fileSize) {
+            this.lines = lines;
+            this.lastModified = lastModified;
+            this.fileSize = fileSize;
+            this.cacheTime = System.currentTimeMillis();
+        }
+        
+        public boolean isValid(long currentLastModified, long currentFileSize) {
+            // 检查文件是否被修改
+            if (this.lastModified != currentLastModified || this.fileSize != currentFileSize) {
+                return false;
+            }
+            // 检查缓存是否过期（30分钟）
+            return (System.currentTimeMillis() - this.cacheTime) < 30 * 60 * 1000;
+        }
+        
+        public String[] getLines() {
+            return lines;
+        }
+    }
+    
+    /**
+     * 从缓存获取压缩文件条目的行数组
+     * 如果缓存不存在或已过期，则重新解压并缓存
+     */
+    private String[] getZipEntryLinesFromCache(String zipPath, String entryName) throws IOException {
+        File zipFile = new File(zipPath);
+        long lastModified = zipFile.lastModified();
+        long fileSize = zipFile.length();
+        
+        String cacheKey = zipPath + "!" + entryName;
+        ZipEntryCache cached = zipEntryCache.get(cacheKey);
+        
+        // 检查缓存是否有效
+        if (cached != null && cached.isValid(lastModified, fileSize)) {
+            return cached.getLines();
+        }
+        
+        // 缓存无效或不存在，重新读取
+        String content = readFileFromZip(zipPath, entryName);
+        String[] lines = content.split("\n");
+        
+        // 更新缓存
+        zipEntryCache.put(cacheKey, new ZipEntryCache(lines, lastModified, fileSize));
+        
+        // 清理过期缓存（简单策略：当缓存超过100个条目时清理）
+        if (zipEntryCache.size() > 100) {
+            cleanupExpiredCache();
+        }
+        
+        return lines;
+    }
+    
+    /**
+     * 清理过期的缓存条目
+     */
+    private void cleanupExpiredCache() {
+        long currentTime = System.currentTimeMillis();
+        zipEntryCache.entrySet().removeIf(entry -> {
+            ZipEntryCache cache = entry.getValue();
+            return (currentTime - cache.cacheTime) > 30 * 60 * 1000; // 30分钟过期
+        });
+    }
 
     public LogViewerService(LogViewerProperties properties, LogPatternsProperties patternsProperties) {
         this.properties = properties;
@@ -245,7 +322,6 @@ public class LogViewerService {
                 pattern = Pattern.compile(keyword);
             } catch (Exception e) {
                 useRegex = false;
-                pattern = null;
             }
         }
         
@@ -254,7 +330,7 @@ public class LogViewerService {
             String line;
             int lineNumber = 1;
             while ((line = reader.readLine()) != null && matches.size() < maxResults) {
-                boolean match = useRegex && pattern != null
+                boolean match = useRegex
                     ? pattern.matcher(line).find() 
                     : line.toLowerCase().contains(keyword.toLowerCase());
                 
@@ -634,9 +710,8 @@ public class LogViewerService {
             throw new FileNotFoundException("Not allowed");
         }
         
-        // 读取完整内容并分割成行
-        String content = readFileFromZip(zipPath, entryName);
-        String[] allLines = content.split("\n");
+        // 使用缓存获取压缩文件内容
+        String[] allLines = getZipEntryLinesFromCache(zipPath, entryName);
         int totalLines = allLines.length;
         
         // 如果最后一行是空的，减去1
@@ -908,11 +983,7 @@ public class LogViewerService {
     private interface LinesProvider {
         List<String> getLines() throws IOException;
     }
-    
-    /**
-     * 获取正则表达式配置
-     * @return 正则表达式配置
-     */
+
     /**
      * 获取日志模式配置
      * 将 LogPatternsProperties 转换为前端可用的格式
