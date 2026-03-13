@@ -18,10 +18,6 @@ spring:
       name: disabled                # 禁用默认用户
       password: disabled            # 禁用默认密码
       roles: []                     # 清空默认角色
-  servlet:
-    multipart:
-      max-file-size: 10MB           # 单个文件最大大小
-      max-request-size: 50MB        # 请求最大大小
   web:
     resources:
       cache:
