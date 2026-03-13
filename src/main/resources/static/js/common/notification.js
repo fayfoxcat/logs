@@ -149,11 +149,42 @@ window.LogViewerNotification = (function() {
         });
     }
 
+    /**
+     * 显示成功通知
+     * 
+     * @param {string} message - 通知消息
+     * @param {number} [duration=3000] - 显示时长（毫秒）
+     * @returns {number} 通知 ID
+     */
+    function showSuccess(message, duration = 3000) {
+        return show({
+            icon: '✅',
+            message: message,
+            type: 'success',
+            duration: duration
+        });
+    }
+
+    /**
+     * 显示错误通知
+     * 
+     * @param {string} message - 通知消息
+     * @param {number} [duration=5000] - 显示时长（毫秒）
+     * @returns {number} 通知 ID
+     */
+    function showError(message, duration = 5000) {
+        return show({
+            icon: '❌',
+            message: message,
+            type: 'error',
+            duration: duration
+        });
+    }
+
     return {
         show,
-        close,
-        showFileAppend,
+        showSuccess,
+        showError,
         showFileModified,
-        showJumpToLatest
     };
 })();
