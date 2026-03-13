@@ -1,6 +1,6 @@
 /**
  * 通知组件
- * 用于显示各种提示信息
+ * 用于显示各种提示信息，支持自定义图标、类型和操作按钮
  */
 window.LogViewerNotification = (function() {
     'use strict';
@@ -9,7 +9,8 @@ window.LogViewerNotification = (function() {
     let notificationId = 0;
 
     /**
-     * 初始化
+     * 初始化通知容器
+     * 在页面中创建通知容器元素
      */
     function init() {
         if (!notificationContainer) {
@@ -20,8 +21,14 @@ window.LogViewerNotification = (function() {
 
     /**
      * 显示通知
-     * @param {Object} options 通知选项
-     * @returns {number} 通知ID
+     * 
+     * @param {Object} options - 通知选项
+     * @param {string} [options.icon='ℹ️'] - 通知图标
+     * @param {string} [options.message=''] - 通知消息
+     * @param {string} [options.type='info'] - 通知类型：info, success, warning, error
+     * @param {number} [options.duration=3000] - 显示时长（毫秒），0 表示不自动关闭
+     * @param {Array} [options.actions=[]] - 操作按钮数组
+     * @returns {number} 通知 ID
      */
     function show(options) {
         init();
@@ -83,6 +90,8 @@ window.LogViewerNotification = (function() {
 
     /**
      * 关闭通知
+     * 
+     * @param {number} id - 通知 ID
      */
     function close(id) {
         const $notification = notificationContainer.find(`[data-id="${id}"]`);
@@ -92,6 +101,12 @@ window.LogViewerNotification = (function() {
         }, 300);
     }
 
+    /**
+     * 显示文件追加通知
+     * 
+     * @param {number} newLines - 新增行数
+     * @returns {number} 通知 ID
+     */
     function showFileAppend(newLines) {
         return show({
             icon: '📝',
@@ -101,6 +116,11 @@ window.LogViewerNotification = (function() {
         });
     }
 
+    /**
+     * 显示文件修改通知
+     * 
+     * @returns {number} 通知 ID
+     */
     function showFileModified() {
         return show({
             icon: '⚠️',
@@ -110,6 +130,12 @@ window.LogViewerNotification = (function() {
         });
     }
 
+    /**
+     * 显示跳转到最新内容的确认通知
+     * 
+     * @param {Function} onConfirm - 确认回调函数
+     * @returns {number} 通知 ID
+     */
     function showJumpToLatest(onConfirm) {
         return show({
             icon: '🔄',

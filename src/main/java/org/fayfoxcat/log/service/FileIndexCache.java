@@ -16,9 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FileIndexCache {
     
-    // 索引粒度：每1000行记录一个偏移量
-    private static final int INDEX_GRANULARITY = 1000;
-    
     // 最大缓存文件数
     private static final int MAX_CACHE_SIZE = 100;
     
@@ -48,6 +45,10 @@ public class FileIndexCache {
     
     /**
      * 获取或构建文件索引
+     * 
+     * @param filePath 文件路径
+     * @return 文件索引信息
+     * @throws IOException IO异常
      */
     public static FileIndex getOrBuildIndex(String filePath) throws IOException {
         File file = new File(filePath);
@@ -57,13 +58,12 @@ public class FileIndexCache {
         
         long lastModified = file.lastModified();
         long fileSize = file.length();
-        String cacheKey = filePath;
-        
+
         // 检查缓存
-        FileIndex cached = indexCache.get(cacheKey);
+        FileIndex cached = indexCache.get(filePath);
         if (cached != null && cached.lastModified == lastModified && cached.fileSize == fileSize) {
             // 缓存有效，更新LRU
-            updateLRU(cacheKey);
+            updateLRU(filePath);
             return cached;
         }
         
@@ -71,13 +71,19 @@ public class FileIndexCache {
         FileIndex index = buildIndex(filePath, lastModified, fileSize);
         
         // 存入缓存
-        putCache(cacheKey, index);
+        putCache(filePath, index);
         
         return index;
     }
     
     /**
      * 构建文件索引
+     * 
+     * @param filePath 文件路径
+     * @param lastModified 最后修改时间
+     * @param fileSize 文件大小
+     * @return 文件索引信息
+     * @throws IOException IO异常
      */
     private static FileIndex buildIndex(String filePath, long lastModified, long fileSize) throws IOException {
         FileIndex index = new FileIndex(filePath, lastModified, fileSize);
@@ -96,6 +102,12 @@ public class FileIndexCache {
     
     /**
      * 读取指定行范围的内容
+     * 
+     * @param filePath 文件路径
+     * @param startLine 起始行号（从1开始）
+     * @param endLine 结束行号（包含）
+     * @return 行内容列表
+     * @throws IOException IO异常
      */
     public static List<String> readLines(String filePath, int startLine, int endLine) throws IOException {
         FileIndex index = getOrBuildIndex(filePath);
@@ -131,6 +143,10 @@ public class FileIndexCache {
     
     /**
      * 获取文件总行数
+     * 
+     * @param filePath 文件路径
+     * @return 文件总行数
+     * @throws IOException IO异常
      */
     public static int getTotalLines(String filePath) throws IOException {
         FileIndex index = getOrBuildIndex(filePath);
@@ -139,6 +155,8 @@ public class FileIndexCache {
     
     /**
      * 清除指定文件的缓存
+     * 
+     * @param filePath 文件路径
      */
     public static void clearCache(String filePath) {
         indexCache.remove(filePath);
@@ -155,6 +173,8 @@ public class FileIndexCache {
     
     /**
      * 更新LRU队列
+     * 
+     * @param key 缓存键
      */
     private static synchronized void updateLRU(String key) {
         lruQueue.remove(key);
@@ -163,6 +183,9 @@ public class FileIndexCache {
     
     /**
      * 存入缓存
+     * 
+     * @param key 缓存键
+     * @param index 文件索引信息
      */
     private static synchronized void putCache(String key, FileIndex index) {
         // 检查缓存大小

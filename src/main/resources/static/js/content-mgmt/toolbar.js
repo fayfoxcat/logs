@@ -9,6 +9,14 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 统一的分页按钮处理
+     * 支持首页、上一页、下一页、末页操作
+     * 
+     * @param {string} action - 操作类型：'first', 'prev', 'next', 'last'
+     * @param {Object} appContext - 应用上下文对象
+     * @param {Function} appContext.getActiveId - 获取当前活动文件ID
+     * @param {Function} appContext.isPaginationMode - 是否为分页模式
+     * @param {Function} appContext.loadPage - 加载指定页面
+     * @param {Function} appContext.getContentLines - 获取内容行数组
      */
     async function handlePaginationClick(action, appContext) {
         if (!appContext.getActiveId()) return;
@@ -51,6 +59,10 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 统一的滚动处理
+     * 支持滚动到顶部和底部，自动处理分页跳转
+     * 
+     * @param {string} action - 操作类型：'top' 或 'bottom'
+     * @param {Object} appContext - 应用上下文对象
      */
     async function handleScrollAction(action, appContext) {
         if (!appContext.getActiveId()) return;
@@ -91,6 +103,12 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 执行内容搜索
+     * 支持正则表达式和普通文本搜索，调用服务端高级搜索接口
+     * 
+     * @param {boolean} openPanel - 是否打开搜索结果面板
+     * @param {Object} appContext - 应用上下文对象
+     * @returns {Promise<Object>} 搜索结果对象
+     * @throws {Error} 搜索失败时抛出错误
      */
     async function performContentSearch(openPanel, appContext) {
         const keyword = $("#content-search").val().trim();
@@ -133,8 +151,8 @@ window.LogViewerToolbar = (function() {
             const result = await response.json();
             if (!result.success) throw new Error(result.error || '搜索失败');
             
-            window.LogViewerSearch.setServerSearchResults(result, appContext.isPaginationMode());
-            window.LogViewerSearch.renderSearchResults(keyword, useRegex);
+            window.LogViewerSearch.setServerSearchResults(result);
+            window.LogViewerSearch.renderSearchResults();
             
             if (openPanel !== false) {
                 window.LogViewerUIState.openSearchPanel();
@@ -156,6 +174,9 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 启动/停止实时刷新
+     * 自动跳转到最后一页并定时刷新内容
+     * 
+     * @param {Object} appContext - 应用上下文对象
      */
     async function toggleAutoRefresh(appContext) {
         const $btn = $("#refresh-btn");
@@ -260,6 +281,7 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 停止刷新（外部调用）
+     * 如果正在刷新，则触发停止操作
      */
     function stopRefresh() {
         if (refreshTimer) {
@@ -269,6 +291,8 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 是否正在刷新
+     * 
+     * @returns {boolean} 刷新状态
      */
     function isRefreshing() {
         return refreshTimer !== null;
@@ -276,6 +300,7 @@ window.LogViewerToolbar = (function() {
 
     /**
      * 清理资源
+     * 清除定时器，释放资源
      */
     function cleanup() {
         if (refreshTimer) {

@@ -55,6 +55,7 @@ public class WebConfig implements WebMvcConfigurer {
      * @param registry 拦截器注册表
      */
     @Override
+    @SuppressWarnings("null")
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns(logViewerEndpoint + "/**");

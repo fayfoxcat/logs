@@ -1,15 +1,22 @@
 /**
  * 【搜索结果区】搜索功能模块
+ * 负责内容搜索、结果渲染和匹配项导航
  */
 window.LogViewerSearch = (function() {
     'use strict';
 
     let currentMatches = [];
     let currentMatchIndex = -1;
-    let currentContentLines = [];
     let serverSearchMode = false;
 
-    function setServerSearchResults(result, isPaginationMode) {
+    /**
+     * 设置服务端搜索结果
+     * 处理服务端返回的搜索结果并转换为内部格式
+     *
+     * @param {Object} result - 服务端搜索结果
+     * @param {Array} result.matches - 匹配项数组
+     */
+    function setServerSearchResults(result) {
         serverSearchMode = true;
         currentMatches = [];
         currentMatchIndex = -1;
@@ -41,9 +48,17 @@ window.LogViewerSearch = (function() {
         });
     }
 
-    function runContentSearch(lines, keyword, useRegex, openPanel) {
+    /**
+     * 执行客户端内容搜索
+     * 在已加载的内容中进行搜索，支持正则表达式
+     *
+     * @param {string[]} lines - 内容行数组
+     * @param {string} keyword - 搜索关键词
+     * @param {boolean} useRegex - 是否使用正则表达式
+     * @returns {Object} 搜索结果对象，包含 matches 和 highlightMap
+     */
+    function runContentSearch(lines, keyword, useRegex) {
         serverSearchMode = false;
-        currentContentLines = lines;
         currentMatches = [];
         currentMatchIndex = -1;
         const highlightMap = new Map();
@@ -113,7 +128,11 @@ window.LogViewerSearch = (function() {
         return { matches: currentMatches, highlightMap };
     }
 
-    function renderSearchResults(keyword, useRegex) {
+    /**
+     * 渲染搜索结果列表
+     * 在搜索结果面板中显示所有匹配项
+     */
+    function renderSearchResults() {
         const $list = $("#search-results-list");
         $list.empty();
 
@@ -149,6 +168,14 @@ window.LogViewerSearch = (function() {
         $list.append(fragment);
     }
 
+    /**
+     * 聚焦到指定的搜索匹配项
+     * 高亮显示匹配项并滚动到对应位置
+     * 
+     * @param {number} idx - 匹配项索引
+     * @param {number} currentPage - 当前页码
+     * @param {Function} onPageChange - 页面切换回调函数
+     */
     function focusMatch(idx, currentPage, onPageChange) {
         if (!currentMatches.length) return;
         const i = Math.max(0, Math.min(currentMatches.length - 1, idx));
@@ -183,6 +210,12 @@ window.LogViewerSearch = (function() {
         highlightCurrentMatch(ln);
     }
 
+    /**
+     * 高亮当前匹配项
+     * 在日志内容区域中高亮显示当前匹配的行
+     * 
+     * @param {number} lineNumber - 行号
+     */
     function highlightCurrentMatch(lineNumber) {
         setTimeout(function() {
             $("#log-content-actual .log-hit-current").removeClass("log-hit-current");
@@ -192,16 +225,30 @@ window.LogViewerSearch = (function() {
         }, 50);
     }
 
+    /**
+     * 获取下一个匹配项的索引
+     * 
+     * @returns {number} 下一个匹配项索引，循环到开头
+     */
     function getNextMatchIndex() {
         if (!currentMatches.length) return -1;
         return (currentMatchIndex + 1) % currentMatches.length;
     }
 
+    /**
+     * 获取上一个匹配项的索引
+     * 
+     * @returns {number} 上一个匹配项索引，循环到末尾
+     */
     function getPrevMatchIndex() {
         if (!currentMatches.length) return -1;
         return (currentMatchIndex - 1 + currentMatches.length) % currentMatches.length;
     }
 
+    /**
+     * 清除搜索结果
+     * 重置所有搜索相关状态和 UI
+     */
     function clearSearchResults() {
         currentMatches = [];
         currentMatchIndex = -1;
@@ -217,7 +264,6 @@ window.LogViewerSearch = (function() {
         getNextMatchIndex,
         getPrevMatchIndex,
         clearSearchResults,
-        getCurrentMatches: () => currentMatches,
-        getCurrentMatchIndex: () => currentMatchIndex
+        getCurrentMatches: () => currentMatches
     };
 })();

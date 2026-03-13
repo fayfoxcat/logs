@@ -10,11 +10,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * 日志查看器安全配置类 - Spring Security 适配
- * 
+ * <p>
  * 根据 enable-auth 配置自动选择安全策略：
  * - enable-auth=false: 允许匿名访问
  * - enable-auth=true: 禁用 Spring Security 默认认证，使用自定义密钥认证
- * 
+ * <p>
  * 使用 SecurityFilterChain 方式（Spring Security 5.7+）
  * 使用最高优先级确保在主项目的 Security 配置之前执行
  *

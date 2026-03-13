@@ -1,5 +1,6 @@
 /**
  * 认证模块
+ * 负责用户认证和登录流程
  */
 window.LogViewerAuth = (function() {
     'use strict';
@@ -8,6 +9,9 @@ window.LogViewerAuth = (function() {
 
     /**
      * 显示登录错误信息
+     * 显示错误提示并在3秒后自动隐藏
+     * 
+     * @param {string} message - 错误信息
      */
     function showLoginError(message) {
         $('#login-error').text(message).show();
@@ -17,7 +21,11 @@ window.LogViewerAuth = (function() {
     }
 
     /**
-     * 初始化认证
+     * 初始化认证模块
+     * 检查认证状态，如果需要认证则显示登录界面
+     * 
+     * @param {string} apiBasePath - API 基础路径
+     * @returns {boolean} 是否已认证或无需认证
      */
     function init(apiBasePath) {
         apiBase = apiBasePath;

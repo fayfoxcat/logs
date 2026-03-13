@@ -245,6 +245,7 @@ public class LogViewerService {
                 pattern = Pattern.compile(keyword);
             } catch (Exception e) {
                 useRegex = false;
+                pattern = null;
             }
         }
         
@@ -253,7 +254,7 @@ public class LogViewerService {
             String line;
             int lineNumber = 1;
             while ((line = reader.readLine()) != null && matches.size() < maxResults) {
-                boolean match = useRegex
+                boolean match = useRegex && pattern != null
                     ? pattern.matcher(line).find() 
                     : line.toLowerCase().contains(keyword.toLowerCase());
                 
@@ -768,16 +769,18 @@ public class LogViewerService {
     
     /**
      * 执行搜索的通用方法
+     * 支持正则表达式、大小写敏感、上下文行数等高级搜索功能
+     * 
      * @param filePath 文件路径
      * @param keyword 搜索关键词
      * @param useRegex 是否使用正则表达式
      * @param caseSensitive 是否区分大小写
      * @param contextLines 上下文行数
      * @param maxResults 最大结果数
-     * @param patternName 预定义模式名称
-     * @param linesProvider 行内容提供者
-     * @param fileVersion 文件版本
-     * @return 搜索结果
+     * @param patternName 预定义模式名称（可选）
+     * @param linesProvider 行内容提供者函数式接口
+     * @param fileVersion 文件版本标识
+     * @return 搜索结果，包含匹配行、上下文、匹配范围等信息
      * @throws IOException IO异常
      */
     private Map<String, Object> performSearch(String filePath, String keyword, boolean useRegex, boolean caseSensitive,
@@ -825,14 +828,16 @@ public class LogViewerService {
             boolean isMatch = false;
             List<Map<String, Integer>> matchRanges = new ArrayList<>();
             
-            if (useRegex && pattern != null) {
-                Matcher matcher = pattern.matcher(line);
-                while (matcher.find()) {
-                    isMatch = true;
-                    Map<String, Integer> range = new HashMap<>();
-                    range.put("start", matcher.start());
-                    range.put("end", matcher.end());
-                    matchRanges.add(range);
+            if (useRegex) {
+                if (pattern != null) {
+                    Matcher matcher = pattern.matcher(line);
+                    while (matcher.find()) {
+                        isMatch = true;
+                        Map<String, Integer> range = new HashMap<>();
+                        range.put("start", matcher.start());
+                        range.put("end", matcher.end());
+                        matchRanges.add(range);
+                    }
                 }
             } else {
                 String searchLine = caseSensitive ? line : line.toLowerCase();

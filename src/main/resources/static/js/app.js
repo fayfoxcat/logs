@@ -40,15 +40,32 @@ $(document).ready(function () {
 
     // ========== 文件事件回调 ==========
 
+    /**
+     * 处理文件追加事件
+     * 当文件内容被追加时更新分页信息
+     * 
+     * @param {Object} info - 文件变更信息
+     * @param {number} info.newTotalPages - 新的总页数
+     */
     function handleFileAppend(info) {
         window.LogViewerPagination.updatePagination(info.newTotalPages * 1000);
     }
 
+    /**
+     * 处理文件修改事件
+     * 显示文件已修改通知并刷新当前页面
+     * 
+     * @param {Object} info - 文件变更信息
+     */
     function handleFileModified(info) {
         window.LogViewerNotification.showFileModified();
         setTimeout(() => refreshCurrentPage(), 500);
     }
 
+    /**
+     * 刷新当前页面内容
+     * 仅在分页模式下有效，重新加载当前页的数据
+     */
     async function refreshCurrentPage() {
         if (!activeId || !usePaginationMode) return;
         try {
@@ -63,6 +80,13 @@ $(document).ready(function () {
 
     // ========== 页面加载 ==========
 
+    /**
+     * 加载指定页面的内容
+     * 支持搜索高亮和自动滚动功能
+     * 
+     * @param {number} page - 页码（从1开始）
+     * @param {boolean} [autoScroll=false] - 是否自动滚动到底部
+     */
     async function loadPage(page, autoScroll = false) {
         try {
             window.LogViewerContentRenderer.showLoading();
@@ -99,6 +123,13 @@ $(document).ready(function () {
 
     // ========== 文件加载回调 ==========
 
+    /**
+     * 文件加载成功回调（非分页模式）
+     * 处理文件内容加载完成后的渲染和状态更新
+     * 
+     * @param {string[]} lines - 文件内容行数组
+     * @param {string} fileId - 文件标识符
+     */
     function onFileLoadSuccess(lines, fileId) {
         activeId = fileId;
         window.LogViewerUIState.setActiveFileName(fileId);
@@ -128,6 +159,16 @@ $(document).ready(function () {
         window.LogViewerUIState.setEmptyHintVisible(false);
     }
 
+    /**
+     * 文件加载成功回调（分页模式）
+     * 处理大文件的分页加载和元数据初始化
+     * 
+     * @param {Object} metadata - 文件元数据
+     * @param {number} metadata.totalLines - 文件总行数
+     * @param {number} metadata.totalPages - 总页数
+     * @param {boolean} metadata.isZipEntry - 是否为压缩包内文件
+     * @param {string} fileId - 文件标识符
+     */
     async function onFileLoadSuccessPaginated(metadata, fileId) {
         activeId = fileId;
         currentFileMetadata = metadata;
@@ -147,6 +188,12 @@ $(document).ready(function () {
         await loadPage(1);
     }
 
+    /**
+     * 文件加载失败回调
+     * 显示错误信息并隐藏加载动画
+     * 
+     * @param {string} message - 错误信息
+     */
     function onFileLoadError(message) {
         window.LogViewerContentRenderer.hideLoading();
         $("#log-content-actual").html(`<div class="text-center text-danger p-5">${message}</div>`);
@@ -155,6 +202,14 @@ $(document).ready(function () {
 
     // ========== 页面切换 ==========
 
+    /**
+     * 处理页面切换
+     * 支持分页模式和非分页模式的页面跳转，以及滚动位置恢复
+     * 
+     * @param {number} targetPage - 目标页码
+     * @param {number} [lineNumber] - 可选的目标行号
+     * @param {number} [scrollPosition] - 可选的滚动位置
+     */
     async function handlePageChange(targetPage, lineNumber, scrollPosition) {
         if (usePaginationMode) {
             await loadPage(targetPage);

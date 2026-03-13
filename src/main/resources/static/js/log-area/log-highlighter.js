@@ -1,5 +1,6 @@
 /**
  * 【日志区】日志语法高亮器
+ * 负责加载高亮规则并对日志内容进行语法高亮处理
  */
 (function() {
     'use strict';
@@ -7,12 +8,25 @@
     let HIGHLIGHT_RULES = [];
     let patternsLoaded = false;
 
+    /**
+     * HTML 转义函数
+     * 防止 XSS 攻击
+     * 
+     * @param {string} text - 需要转义的文本
+     * @returns {string} 转义后的 HTML 文本
+     */
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
     
+    /**
+     * 从服务器加载高亮规则配置
+     * 只加载一次，后续调用直接返回
+     * 
+     * @returns {Promise<void>}
+     */
     async function loadPatterns() {
         if (patternsLoaded) return;
 
@@ -44,6 +58,13 @@
         }
     }
 
+    /**
+     * 对单行日志内容进行语法高亮
+     * 根据加载的规则匹配并添加 CSS 类名
+     * 
+     * @param {string} line - 日志行内容
+     * @returns {string} 高亮后的 HTML 字符串
+     */
     function highlightLine(line) {
         if (!line) return '';
         if (!patternsLoaded || HIGHLIGHT_RULES.length === 0) return escapeHtml(line);
@@ -99,6 +120,15 @@
         return result;
     }
     
+    /**
+     * 对多行日志内容进行语法高亮并生成完整的 HTML
+     * 包含行号和高亮后的内容
+     * 
+     * @param {string[]} lines - 日志行数组
+     * @param {number} startLine - 起始行号
+     * @param {number} endLine - 结束行号
+     * @returns {string} 完整的日志 HTML 字符串
+     */
     function highlightLines(lines, startLine, endLine) {
         let html = '<div class="log-lines">';
         

@@ -74,7 +74,7 @@ public class AuthService {
         }
         
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMddHHmm"));
-        return sb.toString().substring(0, 24) + timestamp;
+        return sb.substring(0, 24) + timestamp;
     }
     
     /**
