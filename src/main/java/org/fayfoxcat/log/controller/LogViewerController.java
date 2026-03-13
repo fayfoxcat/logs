@@ -227,11 +227,10 @@ public class LogViewerController {
     /**
      * 获取正则表达式配置
      * @return 正则表达式配置
-     * @throws IOException IO异常
      */
     @GetMapping("/patterns")
     @ResponseBody
-    public Map<String, Object> getLogPatterns() throws IOException {
+    public Map<String, Object> getLogPatterns() {
         return logViewerService.getLogPatterns();
     }
 

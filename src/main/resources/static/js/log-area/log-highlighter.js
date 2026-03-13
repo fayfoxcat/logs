@@ -4,31 +4,50 @@
 (function() {
     'use strict';
     
-    const HIGHLIGHT_RULES = [
-        { pattern: /\d{4}-\d{2}-\d{2}/g, className: 'log-date' },
-        { pattern: /\d{2}:\d{2}:\d{2}[.,]\d{3}/g, className: 'log-time' },
-        { pattern: /\b(ERROR|FATAL|SEVERE)\b/gi, className: 'log-error' },
-        { pattern: /\b(WARN|WARNING)\b/gi, className: 'log-warning' },
-        { pattern: /\b(INFO|INFORMATION)\b/gi, className: 'log-info' },
-        { pattern: /\b(DEBUG|TRACE|VERBOSE)\b/gi, className: 'log-debug' },
-        { pattern: /\b[A-Z][a-zA-Z0-9]*Exception\b/g, className: 'log-exception' },
-        { pattern: /\b[A-Z][a-zA-Z0-9]*Error\b/g, className: 'log-exception' },
-        { pattern: /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, className: 'log-ip' },
-        { pattern: /https?:\/\/[^\s]+/g, className: 'log-url' },
-        { pattern: /"[^"]*"/g, className: 'log-string' },
-        { pattern: /'[^']*'/g, className: 'log-string' },
-        { pattern: /\b\d+\b/g, className: 'log-number' }
-    ];
-    
+    let HIGHLIGHT_RULES = [];
+    let patternsLoaded = false;
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
     
+    async function loadPatterns() {
+        if (patternsLoaded) return;
+
+        try {
+            const endpoint = window.logViewerEndpoint || '/logs';
+            const response = await fetch(`${endpoint}/patterns`);
+            const data = await response.json();
+
+            if (data && data.patterns) {
+                HIGHLIGHT_RULES = [];
+                Object.entries(data.patterns).forEach(([key, rule]) => {
+                    if (rule.highlight) {
+                        try {
+                            const pattern = new RegExp(rule.regex, 'g');
+                            HIGHLIGHT_RULES.push({
+                                pattern: pattern,
+                                className: rule.className || `log-${key}`
+                            });
+                        } catch (e) {
+                            console.warn(`Invalid regex for pattern ${key}:`, e);
+                        }
+                    }
+                });
+            }
+            patternsLoaded = true;
+        } catch (error) {
+            console.error('Failed to load log patterns:', error);
+            patternsLoaded = true;
+        }
+    }
+
     function highlightLine(line) {
         if (!line) return '';
-        
+        if (!patternsLoaded || HIGHLIGHT_RULES.length === 0) return escapeHtml(line);
+
         const matches = [];
         
         HIGHLIGHT_RULES.forEach(rule => {
@@ -101,7 +120,10 @@
     
     window.LogHighlighter = {
         highlightLine,
-        highlightLines
+        highlightLines,
+        loadPatterns
     };
     
+    loadPatterns();
+
 })();

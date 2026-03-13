@@ -1,8 +1,8 @@
 package org.fayfoxcat.log.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.fayfoxcat.log.config.LogPatternsProperties;
 import org.fayfoxcat.log.config.LogViewerProperties;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -30,13 +30,14 @@ import java.util.zip.ZipFile;
 public class LogViewerService {
 
     private final LogViewerProperties properties;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    
+    private final LogPatternsProperties patternsProperties;
+
     // 正则配置缓存
     private Map<String, Object> logPatternsCache = null;
 
-    public LogViewerService(LogViewerProperties properties) {
+    public LogViewerService(LogViewerProperties properties, LogPatternsProperties patternsProperties) {
         this.properties = properties;
+        this.patternsProperties = patternsProperties;
     }
 
     /**
@@ -142,7 +143,7 @@ public class LogViewerService {
                     File f = p.toFile();
                     if (!f.exists() || f.isDirectory()) return;
                     String name = f.getName();
-                    if (name == null || !name.toLowerCase(Locale.ROOT).contains(kw)) return;
+                    if (!name.toLowerCase(Locale.ROOT).contains(kw)) return;
 
                     FileInfo info = new FileInfo();
                     info.setName(name);
@@ -252,7 +253,7 @@ public class LogViewerService {
             String line;
             int lineNumber = 1;
             while ((line = reader.readLine()) != null && matches.size() < maxResults) {
-                boolean match = useRegex && pattern != null 
+                boolean match = useRegex
                     ? pattern.matcher(line).find() 
                     : line.toLowerCase().contains(keyword.toLowerCase());
                 
@@ -313,7 +314,7 @@ public class LogViewerService {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry == null || entry.getName() == null) continue;
+                if (entry == null) continue;
                 String entryName = entry.getName().replace('\\', '/');
                 entryMap.put(entryName, entry);
             }
@@ -375,16 +376,6 @@ public class LogViewerService {
     }
 
     /**
-     * 列出压缩文件中的文件（重载方法，使用空前缀）
-     * @param zipPath 压缩文件路径
-     * @return 压缩文件中的文件列表
-     * @throws IOException IO异常
-     */
-    public List<FileInfo> listFilesInZip(String zipPath) throws IOException {
-        return listFilesInZip(zipPath, "");
-    }
-
-    /**
      * 读取压缩文件中的文件内容（支持 .gz 文件）
      * @param zipPath 压缩文件路径
      * @param entryName 压缩文件中的文件名称
@@ -433,7 +424,7 @@ public class LogViewerService {
         }
         
         StringBuilder content = new StringBuilder();
-        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzipPath));
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(Files.newInputStream(Paths.get(gzipPath)));
              BufferedReader reader = new BufferedReader(new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -452,7 +443,7 @@ public class LogViewerService {
      */
     private String readGzipFileTail(String gzipPath, int lines) throws IOException {
         List<String> lineList = new ArrayList<>();
-        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzipPath));
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(Files.newInputStream(Paths.get(gzipPath)));
              BufferedReader reader = new BufferedReader(new InputStreamReader(gzipInputStream, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -769,9 +760,7 @@ public class LogViewerService {
                                String content = readFileFromZip(zipPath, entryName);
                                String[] lines = content.split("\n");
                                List<String> allLines = new ArrayList<>();
-                               for (String line : lines) {
-                                   allLines.add(line);
-                               }
+                               Collections.addAll(allLines, lines);
                                return allLines;
                            },
                            fileVersion);
@@ -863,33 +852,31 @@ public class LogViewerService {
             
             if (isMatch) {
                 totalMatches++;
-                
-                if (matches.size() < maxResults) {
-                    Map<String, Object> match = new HashMap<>();
-                    int lineNumber = i + 1;
-                    match.put("lineNumber", lineNumber);
-                    match.put("content", line);
-                    match.put("matchRanges", matchRanges);
-                    match.put("page", (int) Math.ceil((double) lineNumber / pageSize));
-                    
-                    // 添加上下文
-                    Map<String, Object> context = new HashMap<>();
-                    List<String> before = new ArrayList<>();
-                    List<String> after = new ArrayList<>();
-                    
-                    for (int j = Math.max(0, i - contextLines); j < i; j++) {
-                        before.add(allLines.get(j));
-                    }
-                    for (int j = i + 1; j < Math.min(allLines.size(), i + 1 + contextLines); j++) {
-                        after.add(allLines.get(j));
-                    }
-                    
-                    context.put("before", before);
-                    context.put("after", after);
-                    match.put("context", context);
-                    
-                    matches.add(match);
+
+                Map<String, Object> match = new HashMap<>();
+                int lineNumber = i + 1;
+                match.put("lineNumber", lineNumber);
+                match.put("content", line);
+                match.put("matchRanges", matchRanges);
+                match.put("page", (int) Math.ceil((double) lineNumber / pageSize));
+
+                // 添加上下文
+                Map<String, Object> context = new HashMap<>();
+                List<String> before = new ArrayList<>();
+                List<String> after = new ArrayList<>();
+
+                for (int j = Math.max(0, i - contextLines); j < i; j++) {
+                    before.add(allLines.get(j));
                 }
+                for (int j = i + 1; j < Math.min(allLines.size(), i + 1 + contextLines); j++) {
+                    after.add(allLines.get(j));
+                }
+
+                context.put("before", before);
+                context.put("after", after);
+                match.put("context", context);
+
+                matches.add(match);
             }
         }
         
@@ -920,27 +907,46 @@ public class LogViewerService {
     /**
      * 获取正则表达式配置
      * @return 正则表达式配置
-     * @throws IOException IO异常
      */
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getLogPatterns() throws IOException {
+    public Map<String, Object> getLogPatterns() {
         if (logPatternsCache != null) {
             return logPatternsCache;
         }
         
-        try {
-            ClassPathResource resource = new ClassPathResource("patterns.json");
-            InputStream inputStream = resource.getInputStream();
-            logPatternsCache = objectMapper.readValue(inputStream, Map.class);
-            return logPatternsCache;
-        } catch (Exception e) {
-            // 如果文件不存在，返回空配置
-            Map<String, Object> empty = new HashMap<>();
-            empty.put("version", "1.0");
-            empty.put("patterns", new HashMap<>());
-            empty.put("presets", new HashMap<>());
-            return empty;
+        Map<String, Object> result = new HashMap<>();
+        result.put("version", "1.0");
+
+        // 转换 rules
+        Map<String, Object> rulesMap = new LinkedHashMap<>();
+        if (patternsProperties.getRules() != null) {
+            patternsProperties.getRules().forEach((key, rule) -> {
+                Map<String, Object> ruleData = new LinkedHashMap<>();
+                ruleData.put("name", rule.getName());
+                ruleData.put("regex", rule.getRegex());
+                ruleData.put("className", rule.getClassName());
+                ruleData.put("color", rule.getColor());
+                ruleData.put("description", rule.getDescription());
+                ruleData.put("highlight", rule.isHighlight());
+                rulesMap.put(key, ruleData);
+            });
         }
+        result.put("patterns", rulesMap);
+
+        // 转换 presets
+        Map<String, Object> presetsMap = new LinkedHashMap<>();
+        if (patternsProperties.getPresets() != null) {
+            patternsProperties.getPresets().forEach((key, preset) -> {
+                Map<String, Object> presetData = new LinkedHashMap<>();
+                presetData.put("name", preset.getName());
+                presetData.put("patterns", preset.getPatterns());
+                presetData.put("description", preset.getDescription());
+                presetsMap.put(key, presetData);
+            });
+        }
+        result.put("presets", presetsMap);
+
+        logPatternsCache = result;
+        return result;
     }
 
     /**

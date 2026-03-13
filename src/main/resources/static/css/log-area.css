@@ -58,6 +58,9 @@
 #log-content-actual .log-number { color: #42a5f5; }
 #log-content-actual .log-url { color: #29b6f6; text-decoration: underline; cursor: pointer; }
 #log-content-actual .log-ip { color: #ab47bc; }
+#log-content-actual .log-email { color: #66bb6a; }
+#log-content-actual .log-uuid { color: #42a5f5; }
+#log-content-actual .log-sql { color: #ff5722; font-weight: bold; }
 
 /* 日志行 */
 .log-lines {

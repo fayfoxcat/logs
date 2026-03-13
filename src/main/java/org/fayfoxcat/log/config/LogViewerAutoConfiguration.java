@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(LogViewerProperties.class)
+@EnableConfigurationProperties({LogViewerProperties.class, LogPatternsProperties.class})
 @ComponentScan(basePackages = "org.fayfoxcat.log")
 public class LogViewerAutoConfiguration {
     // 自动配置类，无需额外代码
